@@ -1,6 +1,10 @@
+// const {
+//     functionNames
+// } = require("./")
+
 const { 
     client
-} = require('./index');
+} = require('./client');
 
 async function dropTables() {
     try {
