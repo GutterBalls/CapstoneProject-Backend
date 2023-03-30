@@ -4,13 +4,6 @@ const productsRouter = express.Router();
 
 const { requireUser } = require('./utils');
 
-// Required Functions:
-// getAllProducts
-// getProductById
-// getProductByName
-// createProduct
-// updateProduct
-// deleteProduct
 
 const { 
     getAllProducts,
