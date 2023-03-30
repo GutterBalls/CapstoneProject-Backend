@@ -82,10 +82,10 @@ usersRouter.post('/login', async (req, res, next) => {
 // Register
 usersRouter.post('/register', async (req, res, next) => {
     const { username, password } = req.body;
-    console.log("req body", req.body)
+    // console.log("req body", req.body)
     try {
         const _user = await getUserByUsername(username);
-        console.log("User from getUser function", _user)
+        // console.log("User from getUser function", _user)
         if (_user) {
             res.send({
                 name: 'UserExistsError',

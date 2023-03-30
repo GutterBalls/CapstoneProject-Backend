@@ -6,9 +6,7 @@ const { JWT_SECRET } = process.env;
 
 const apiRouter = express.Router();
 
-//getUserById needs to be created
-//const { getUserById } = require('../db');
-
+const { getUserById } = require('../db');
 
 // GET /api/health
 apiRouter.get('/health', async (req, res, next) => {
@@ -30,8 +28,7 @@ apiRouter.use(async (req, res, next) => {
             const { id } = jwt.verify(token, JWT_SECRET);
 
             if (id) {
-//getUserById(id) needs to be created 
-                // req.user = await getUserById(id);
+                req.user = await getUserById(id);
                 next();
             }
         } catch ({ name, message }) {
