@@ -9,13 +9,13 @@ const { requireUser } = require('./utils');
 // Required Functions:
 // createUser
 // getAllUsers 
-// getUsersById
+// getUserById
 // getUserByUsername
 
 const { 
     // createUser,
     // getAllUsers,
-    // getUsersById,
+    // getUserById,
     // getUserByUsername
 } = require('../db');
 
@@ -45,17 +45,25 @@ usersRouter.post('/login', async (req, res, next) => {
     }
 
     try {
-        // const user = await getUserByUsername(username);
-    
-        if (user && user.password == password) {
-// create token & return to user
-            const token = jwt.sign(user, process.env.JWT_SECRET);
-            res.send({ message: "you're logged in!" , token: `${ token }`});
-            console.log(token);
+        const user = await getUserByUsername(username); 
+        console.log(user); 
+        const areTheyTheSame = await bcrypt.compare(password, user.password); 
+        if (user && areTheyTheSame) {  
+            const token = jwt.sign({ 
+                id: user.id, 
+                username 
+            }, process.env.JWT_SECRET, { 
+                expiresIn: "1w" 
+            });
+
+            res.send({
+                message: "You are now logged in!", 
+                token: token 
+            });
         } else {
-            next({ 
-                name: 'IncorrectCredentialsError', 
-                message: 'Username or password is incorrect'
+            res.send({
+                name: "Incorrect Credentials!",
+                message: "Username or password is incorrect!"
             });
         }
     } catch(error) {
@@ -63,6 +71,7 @@ usersRouter.post('/login', async (req, res, next) => {
         next(error);
     }
 });
+
 
 // Register
 usersRouter.post('/register', async (req, res, next) => {
