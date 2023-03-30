@@ -2,9 +2,7 @@ const {
     createUser
 } = require('./')
 
-const { 
-    client
-} = require('./client');
+const client = require('./client');
 
 // Dropping tables, if they exist to repopulate with test data.
 async function dropTables() {
