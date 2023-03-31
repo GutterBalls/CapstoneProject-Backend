@@ -81,7 +81,7 @@ usersRouter.post('/login', async (req, res, next) => {
 
 // Register
 usersRouter.post('/register', async (req, res, next) => {
-    const { username, password, isAdmin } = req.body;
+    const { username, password, email, isAdmin } = req.body;
     console.log("req body", req.body)
     try {
         const _user = await getUserByUsername(username);
@@ -100,6 +100,7 @@ usersRouter.post('/register', async (req, res, next) => {
         const user = await createUser({
             username,
             password,
+            email,
             isAdmin
         });
             if (user.id) {
@@ -122,11 +123,12 @@ usersRouter.post('/register', async (req, res, next) => {
 usersRouter.patch('/:id', requireUser, async (req, res, next) => {
     try{
         const { id } = req.params;
-        const { username, password } = req.body;
+        const { username, password, email } = req.body;
         let saltRounds = 10;
         let hashPassword = await bcrypt.hash(password, saltRounds);
+        let hashEmail = await bcrypt.hash(email, saltRounds);
 // Update user in DB
-        const updatedUser = await updateUser(id, {username}, hashPassword);
+        const updatedUser = await updateUser(id, {username}, hashPassword, hashEmail);
 // Send updated user response
         res.send(updatedUser);
     } catch (error) {

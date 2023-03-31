@@ -11,6 +11,7 @@ async function dropTables() {
     try {
         console.log("Starting to drop tables...");
         await client.query(`
+            DROP TABLE IF EXISTS orders;
             DROP TABLE IF EXISTS products;
             DROP TABLE IF EXISTS product_category;
             DROP TABLE IF EXISTS users;
@@ -32,6 +33,7 @@ async function createTables() {
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
             "isAdmin" BOOLEAN DEFAULT false
             );
             CREATE TABLE product_category(
@@ -49,6 +51,12 @@ async function createTables() {
             clearance BOOLEAN DEFAULT false,
             category_id INTEGER REFERENCES product_category(id)
             );
+            CREATE TABLE orders(
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            order_date DATE,
+            order_status VARCHAR(255)
+            );
 
         `);
         console.log("Finished building tables!");
@@ -64,10 +72,10 @@ async function createInitialUsers() {
     try {
         console.log("Starting to create users...");
         const dummyUsers = [
-            { username: "albert", password: "bertie99", isAdmin: false },
-            { username: "sandra", password: "sandra123", isAdmin: false },
-            { username: "glamgal", password: "glamgal123", isAdmin: false },
-            { username: "admin", password: "password", isAdmin: true }
+            { username: "albert", password: "bertie99", email: "albert@heyyyy.com", isAdmin: false },
+            { username: "sandra", password: "sandra123", email: "sandy@thebest.com", isAdmin: false },
+            { username: "glamgal", password: "glamgal123", email: "josh@glamorous.com", isAdmin: false },
+            { username: "admin", password: "password", email: "admin@gutter-balls.com", isAdmin: true }
         ];
         const users = await Promise.all(dummyUsers.map(createUser));
     
@@ -128,6 +136,29 @@ async function createInitialProducts() {
         throw error;
     };
 };
+
+// Create dummy data for orders table
+async function createInitialOrders() {
+    try {
+        console.log("Starting to create orders");
+        const dummyOrders = [
+            { user_id: 1, order_date: new Date, order_status: "pending"},
+            { user_id: 2, order_date: new Date, order_status: "shipped"},
+            { user_id: 3, order_date: new Date, order_status: "delivered"},
+            { user_id: 1, order_date: new Date}
+        ];
+
+        const orders = await Promise.all(dummyOrders.map(createOrder));
+
+        console.log("orders created:");
+        console.log(orders)
+        console.log("Finished creating orders!");
+
+    } catch (error) {
+        console.error("Error creating orders");
+        throw error;
+    }
+}
 async function rebuildDB() {
     try {
     client.connect();
@@ -137,6 +168,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialCategory();
     await createInitialProducts();
+    // await createInitialOrders();
 
 
 
