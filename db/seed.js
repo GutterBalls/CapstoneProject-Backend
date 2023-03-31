@@ -64,9 +64,10 @@ async function createInitialUsers() {
     try {
         console.log("Starting to create users...");
         const dummyUsers = [
-            { username: "albert", password: "bertie99" },
-            { username: "sandra", password: "sandra123" },
-            { username: "glamgal", password: "glamgal123" },
+            { username: "albert", password: "bertie99", isAdmin: false },
+            { username: "sandra", password: "sandra123", isAdmin: false },
+            { username: "glamgal", password: "glamgal123", isAdmin: false },
+            { username: "admin", password: "password", isAdmin: true }
         ];
         const users = await Promise.all(dummyUsers.map(createUser));
     

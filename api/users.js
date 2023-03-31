@@ -7,7 +7,7 @@ const usersRouter = express.Router();
 
 const jwt = require('jsonwebtoken');
 
-const { requireUser } = require('./utils');
+const { requireUser, requireAdmin } = require('./utils');
 
 const { 
     createUser,
@@ -19,17 +19,17 @@ const {
 } = require('../db');
 
 
-// Get all users
-usersRouter.get('/', async (req, res) => {
+// Get all users - admin only
+usersRouter.get('/', requireAdmin, async (req, res) => {
     const users = await getAllUsers();
 
-    res.send({
+    res.send(
         users
-    });
+    );
 }) 
 
 // Get user by ID
-usersRouter.get('/:id', /* requireUser, */ async (req, res) => {
+usersRouter.get('/:id', requireUser, async (req, res) => {
     const { id } = req.params;
     console.log("Req params", id)
     const user = await getUserById(id);
@@ -81,11 +81,11 @@ usersRouter.post('/login', async (req, res, next) => {
 
 // Register
 usersRouter.post('/register', async (req, res, next) => {
-    const { username, password } = req.body;
-    // console.log("req body", req.body)
+    const { username, password, isAdmin } = req.body;
+    console.log("req body", req.body)
     try {
         const _user = await getUserByUsername(username);
-        // console.log("User from getUser function", _user)
+        console.log("User from getUser function", _user)
         if (_user) {
             res.send({
                 name: 'UserExistsError',
@@ -99,7 +99,8 @@ usersRouter.post('/register', async (req, res, next) => {
         } else {
         const user = await createUser({
             username,
-            password
+            password,
+            isAdmin
         });
             if (user.id) {
                 const token = jwt.sign({ 
@@ -118,7 +119,7 @@ usersRouter.post('/register', async (req, res, next) => {
 });
 
 // Edit username and password
-usersRouter.patch('/:id', /* requireUser, */ async (req, res, next) => {
+usersRouter.patch('/:id', requireUser, async (req, res, next) => {
     try{
         const { id } = req.params;
         const { username, password } = req.body;
@@ -134,11 +135,11 @@ usersRouter.patch('/:id', /* requireUser, */ async (req, res, next) => {
 });
 
 // // Delete user by ID
-usersRouter.delete('/:id', /* requireUser, */ async (req, res, next) => {
+usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) => {
     try {
         const user = await getUserById(req.params.id);
 
-        if (user.id /* === req.user.id */) {
+        if (user.id === req.user.id || req.user.isAdmin == true) {
             const deletedUser = await deleteUser(user.id, { active: false });
             
             res.send(deletedUser);
