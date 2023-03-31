@@ -1,6 +1,6 @@
 const client = require('./client');
 
-// Create a category.
+// Create a category
 async function createCategory(name) {
     try {
         console.log("starting createCategory");
@@ -19,7 +19,7 @@ async function createCategory(name) {
 };
 
 // Create a product.
-async function createProducts({image, brand, name, description, price, sale, clearance, category_id}) {
+async function createProduct({image, brand, name, description, price, sale, clearance, category_id}) {
     try {
         console.log("staring createProducts");
         const { rows } = await client.query(`
@@ -35,7 +35,101 @@ async function createProducts({image, brand, name, description, price, sale, cle
     };
 };
 
+async function getProductById(id) {
+    try {
+        const { rows: [ product ]} = await client.query(`
+            SELECT *
+            FROM products
+            WHERE id=$1
+            RETURNING *;
+        `, [id]);
+
+        if (!product) {
+            return ({
+                name: "ProductNotFound",
+                message: "Product Not Found."
+            });
+        };
+
+        console.log(user);
+        return user;
+
+    } catch (error) {
+        throw error;
+    };
+};
+
+async function getAllProducts() {
+    try {
+        const { rows } = await client.query(`
+            SELECT *
+            FROM products
+            RETURNING *;
+        `);
+
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+async function deleteProduct(id) {
+    try {
+        await client.query(`
+            DELETE FROM products
+            WHERE id=$1;
+        `, [id]);
+        
+        return `Deleted product id: ${id}`
+    } catch (error) {
+        throw error;
+    };
+};
+
+async function updateProduct(id, fields={}) {
+    const setString = Object.keys(fields).map(
+        (key, index) => `"${ key }"=$${ index + 1 }`
+    ).join(', ');
+
+    if(setString.length === 0) {
+        return;
+    };
+
+    try {
+        const { rows: [product] } = await client.query(`
+            UPDATE products
+            SET ${setString}
+            WHERE id=${id}
+            RETURNING *;
+        `, Object.values(fields));
+
+        return product;
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getProductByName(name) {
+    try {
+    const { rows: [product] } = await client.query(`
+        SELECT *
+        FROM products
+        WHERE name=$1;
+    `, [name]);
+
+    return product;
+    } catch (error) {
+    throw error;
+    };
+};
+
 module.exports = {
     createCategory,
-    createProducts
+    createProduct,
+    getProductById,
+    getAllProducts,
+    deleteProduct,
+    updateProduct,
+    getProductByName
 }
