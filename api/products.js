@@ -2,13 +2,13 @@ const express = require('express');
 
 const productsRouter = express.Router();
 
-const { requireUser } = require('./utils');
+const { requireAdmin } = require('./utils');
 
 
 const { 
     getAllProducts,
     getProductById,
-    // getProductByName,
+    getProductByName,
     createProduct,
     updateProduct,
     deleteProduct
@@ -18,10 +18,19 @@ const {
 productsRouter.get('/', async (req, res) => {
     const products = await getAllProducts();
 
-    res.send({
+    res.send(
         products
-    });
-})
+    );
+});
+
+// Get products by name
+productsRouter.get('/:productName', async (req, res) => {
+    const { productName } = req.params;
+    const product = await getProductByName(productName);
+    res.send(
+        product
+    );
+});
 
 // Get products by ID
 productsRouter.get('/:id', async (req, res) => {
@@ -32,62 +41,64 @@ productsRouter.get('/:id', async (req, res) => {
     res.send(
         product
     );
-}) ;
+});
 
-// Create new product
-productsRouter.post('/', async (req, res) => {
+// Create new product - Admin only
+productsRouter.post('/', requireAdmin, async (req, res) => {
     try{
         const { } = req.body;
         const productData = {};
 
-        // if(){
-
-        // }
-
-        const createdProduct = await createProduct();
-
+        const createdProduct = await createProduct({image, brand, name, description, price, sale, clearance, category_id});
         res.send(
             createdProduct
-        )
+        );
+
     } catch (error) {
         throw(error);
-    }
-})
+    };
+});
 
-// update product by ID
-productsRouter.patch('/:id', async (req, res) => {
+// update product by ID - Admin only
+productsRouter.patch('/:id', requireAdmin, async (req, res) => {
     try{
         const { id } = req.params;
-        const {  } = req.body;
-        const updatedProduct = await updateProduct(id, { });
+        const { image, brand, name, description, price, sale, clearance, category_id } = req.body;
 
-        res.send(updatedProduct)
+        const updatedProduct = await updateProduct(id, { image, brand, name, description, price, sale, clearance, category_id });
+
+        res.send(
+            updatedProduct
+        );
+
     } catch (error) {
         throw(error);
-    }
-})
+    };
+});
 
-// delete product by ID
-productsRouter.delete('/:id', async (req, res) => {
+// delete product by ID - Admin only
+productsRouter.delete('/:id', requireAdmin, async (req, res) => {
     try{
         const product = await getProductById(req.params.id);
-        // const { id } = req.params;
         if(product.id){
             const deletedProduct = await deleteProduct(id);
-            
-                res.send(deletedProduct);
+                res.send(
+                    deletedProduct
+                );
         } else {
-            res.send(product ? { 
+            res.send(product ? {
                 name: "UnauthorizedProductError",
                 message: "You cannot delete a product"
             } : {
                 name: "ProductNotFoundError",
                 message: "That product does not exist"
             });
-        }
+        };
+
     } catch (error) {
         throw(error);
-    }
-})
+    };
+});
+
 
 module.exports = productsRouter;
