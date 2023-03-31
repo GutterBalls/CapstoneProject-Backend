@@ -2,18 +2,18 @@ const client = require("./client");
 const bcrypt = require("bcrypt");
 
 // Create a user.
-async function createUser({ username, password }) {
+async function createUser({ username, password, isAdmin }) {
     try {
     console.log("starting createUser");
     let saltRounds = 10;
     let hashPassword = await bcrypt.hash(password, saltRounds);
     
     const { rows: [ user ] } = await client.query(`
-        INSERT INTO users(username, password)
-        VALUES ($1, $2)
+        INSERT INTO users(username, password, "isAdmin")
+        VALUES ($1, $2, $3)
         ON CONFLICT (username) DO NOTHING 
         RETURNING *;
-    `, [username, hashPassword]);
+    `, [username, hashPassword, isAdmin]);
 
         console.log("finished createUser");
     return user;
@@ -32,7 +32,14 @@ async function getUserByUsername(username) {
           FROM users
           WHERE username=$1;
       `, [username]);
-  
+
+    //   if (!user) {
+    //     return ({
+    //         name: "UserNotFound",
+    //         message: "Please create an account."
+    //     });
+    // };
+
       return user;
     } catch (error) {
       throw error;
@@ -43,13 +50,13 @@ async function getUserByUsername(username) {
 async function getUserById(id) {
     try {
         const { rows: [ user ]} = await client.query(`
-            SELECT id, username
+            SELECT id, username, "isAdmin"
             FROM users
             WHERE id=$1;
         `, [id]);
 
         if (!user) {
-            res.send({
+            return ({
                 name: "UserNotFound",
                 message: "Please create an account."
             });

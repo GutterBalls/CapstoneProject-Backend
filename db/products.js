@@ -17,6 +17,8 @@ async function createCategory(name) {
         throw error;
     };
 };
+
+// Create a product.
 async function createProducts({image, brand, name, description, price, sale, clearance, category_id}) {
     try {
         console.log("staring createProducts");
