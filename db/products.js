@@ -109,12 +109,15 @@ async function updateProduct(id, fields={}) {
 }
 
 async function getProductByName(name) {
+    console.log("Function is running");
     try {
+        console.log("name", name);
     const { rows: [product] } = await client.query(`
         SELECT *
         FROM products
         WHERE name=$1;
     `, [name]);
+    console.log("Sql query finished");
 
     return product;
     } catch (error) {

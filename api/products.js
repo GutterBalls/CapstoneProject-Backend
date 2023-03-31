@@ -21,35 +21,30 @@ productsRouter.get('/', async (req, res, next) => {
     res.send(
         products
     );
-    next();
 });
 
-// Get products by ID
-productsRouter.get('/id/:id', async (req, res, next) => {
-    const { id } = req.params;
-    // console.log("Req params", id)
-    const productById = await getProductById(id);
-
-    res.send(
-        productById
-    );
-    next();
+// Get products by ID or name.
+productsRouter.get('/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        let idNumber = isNaN(Number(id)) ? id : Number(id)
+        
+        if ( typeof idNumber  === "string") { 
+            const productByName = await getProductByName(id);
+            res.send(
+                productByName
+            );
+            
+        } else {
+            const productById = await getProductById(id);
+            res.send(
+                productById
+            );
+        };
+    } catch (error) {
+        throw error;
+    };
 });
-
-// Get products by name
-productsRouter.get('/name/:name', async (req, res, next) => {
-    const { name } = req.params;
-    const product = await getProductByName(name);
-    res.send(
-        product
-    );
-    next();
-});
-
-
-
-
-
 
 
 // Create new product - Admin only
