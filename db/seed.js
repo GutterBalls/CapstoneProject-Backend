@@ -1,7 +1,8 @@
 const {
     createUser,
     createCategory,
-    createProduct
+    createProduct,
+    createOrder
 } = require('./')
 
 const client = require('./client');
@@ -55,7 +56,7 @@ async function createTables() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             order_date DATE,
-            order_status VARCHAR(255)
+            order_status VARCHAR(255) DEFAULT 'pending'
             );
 
         `);
@@ -145,7 +146,7 @@ async function createInitialOrders() {
             { user_id: 1, order_date: new Date, order_status: "pending"},
             { user_id: 2, order_date: new Date, order_status: "shipped"},
             { user_id: 3, order_date: new Date, order_status: "delivered"},
-            { user_id: 1, order_date: new Date}
+            { user_id: 1, order_date: new Date, order_status: "processing"}
         ];
 
         const orders = await Promise.all(dummyOrders.map(createOrder));
@@ -168,7 +169,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialCategory();
     await createInitialProducts();
-    // await createInitialOrders();
+    await createInitialOrders();
 
 
 

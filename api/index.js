@@ -31,8 +31,8 @@ apiRouter.use(async (req, res, next) => {
                 req.user = await getUserById(id);
                 next();
             }
-        } catch ({ name, message }) {
-            next({ name, message });
+        } catch (error) {
+            next(error);
         }
     } else {
         next({

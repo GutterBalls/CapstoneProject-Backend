@@ -1,30 +1,26 @@
 const client = require('./client');
 
-// Required Functions:
-// getAllOrders//
-// getOrderById//
-// getOrderByName
-// createOrder//
-// editOrder//
-// deleteOrder//
-
 // Create an order.
-async function createOrder({ order_date, order_status }) {
+async function createOrder( {user_id, order_date, order_status} ) {
+    
+    console.log("Order date", order_date)
+    console.log("Order status", order_status)
     try {
         console.log("staring createProducts");
-        const { rows } = await client.query(`
-            INSERT INTO orders(order_date, order_status)
-            VALUES ($1, $2)
+        const { rows: [order] } = await client.query(`
+            INSERT INTO orders(user_id, order_date, order_status)
+            VALUES ($1, $2, $3)
             RETURNING *;
-        `, [order_date, order_status]);
+        `, [user_id, order_date, order_status]);
 
         console.log("finished createOrder");
-        return rows;
+        return order;
     } catch (error) {
         throw "Error w/ createOrder", error;
     };
 };
 
+// Get an order by order id.
 async function getOrderById(id) {
     try {
         const { rows: [ order ]} = await client.query(`
@@ -48,6 +44,7 @@ async function getOrderById(id) {
     };
 };
 
+// Get all orders.
 async function getAllOrders() {
     try {
         const { rows } = await client.query(`
@@ -61,6 +58,7 @@ async function getAllOrders() {
     };
 };
 
+// Delete an order by order id.
 async function deleteOrder(id) {
     try {
         await client.query(`
@@ -68,55 +66,56 @@ async function deleteOrder(id) {
             WHERE id=$1;
         `, [id]);
         
-        return `Deleted order id: ${id}`
+        return `Deleted order id: ${id}`;
     } catch (error) {
         throw "Error w/ deleteOrder", error;
     };
 };
 
-async function editOrder(id, fields={}) {
-    const setString = Object.keys(fields).map(
-        (key, index) => `"${ key }"=$${ index + 1 }`
-    ).join(', ');
-
-    if(setString.length === 0) {
-        return;
-    };
-
+// Update an order by order id.
+async function editOrder(id, {order_status}) {
     try {
         const { rows: [ order ] } = await client.query(`
             UPDATE orders
-            SET ${setString}
-            WHERE id=${id}
+            SET order_status=$2
+            WHERE id=$1
             RETURNING *;
-        `, Object.values(fields));
+        `, [id, order_status]);
 
         return order;
 
     } catch (error) {
         throw "Error w/ editOrder", error;
-    }
-}
+    };
+};
 
-// async function getProductByName(name) {
-//     try {
-//     const { rows: [product] } = await client.query(`
-//         SELECT *
-//         FROM products
-//         WHERE name=$1;
-//     `, [name]);
+async function getOrderByUserId(userId) {
+    try {
+        const { rows: [ order ]} = await client.query(`
+            SELECT * 
+            FROM orders
+            WHERE user_id=$1
+        `, [userId]);
 
-//     return product;
-//     } catch (error) {
-//     throw error;
-//     };
-// };
+        if (!order) {
+            return ({
+                name: "OrderNotFound",
+                message: "Order Not Found."
+            });
+        };
+
+        console.log(order);
+        return order;
+
+    } catch (error) {
+        throw error;
+    };
+};
 
 module.exports = {
     getAllOrders,
     getOrderById,
     getOrderByUserId,
-    getOrderByName,
     createOrder,
     editOrder,
     deleteOrder

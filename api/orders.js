@@ -4,19 +4,9 @@ const ordersRouter = express.Router();
 
 const { requireUser, requireAdmin } = require('./utils');
 
-// Required Functions:
-// getAllOrders
-// getOrderById
-// getOrderByName
-// createOrder
-// editOrder
-// deleteOrder
-
 const { 
     getAllOrders,
     getOrderById,
-    getOrderByUserId,
-    getOrderByName,
     createOrder,
     editOrder,
     deleteOrder
@@ -29,37 +19,40 @@ ordersRouter.get('/', requireAdmin, async (req, res, next) => {
     res.send(
         allOrders
     );
-    next();
+    
 })
 
 // Get order by ID - User or Admin
-ordersRouter.get('/orderId/:orderId', requireUser || requireAdmin, async (req, res, next) => {
+ordersRouter.get('/:id', requireUser || requireAdmin, async (req, res, next) => {
     const { id } = req.params;
     const orderById = await getOrderById(id);
 
     res.send(
         orderById
     );
-    next();
-})
+    
+});
 
-// Get order by userId - User or Admin
-ordersRouter.get('/userId/:userId', requireUser || requireAdmin, async (req, res, next) => {
-    const { id } = req.params;
-    const orderByUserId = await getOrderByUserId(id);
+// // Get order by userId - User or Admin
+// ordersRouter.get('/user:id', requireUser || requireAdmin, async (req, res, next) => {
+//     const { id } = req.params;
+//     const orderByUserId = await getOrderByUserId(id);
 
-    res.send(
-        orderByUserId
-    );
-    next();
-})
+//     res.send(
+//         orderByUserId
+//     );
+    
+// });
 
 // Create new order - User
-ordersRouter.post('/', requireUser, async (req, res, next) => {
+ordersRouter.post('/', requireUser || requireAdmin, async (req, res, next) => {
     try{
-        const { orderDate, orderStatus } = req.body;
+        const { user_id, order_date, order_status } = req.body;
+        console.log("Req user", req.user.id)
+        console.log("Req body", req.body);
 
-        const createdOrder = await createOrder( req.user.id, { orderDate, orderStatus });
+        const createdOrder = await createOrder( {user_id, order_date, order_status} );
+        
         res.send(
             createdOrder
         );
@@ -70,12 +63,12 @@ ordersRouter.post('/', requireUser, async (req, res, next) => {
 })
 
 // update order by ID - Admin only
-ordersRouter.patch('/:orderId', requireAdmin, async (req, res, next) => {
+ordersRouter.patch('/:id', requireAdmin, async (req, res, next) => {
     try{
         const { id } = req.params;
-        const { orderStatus } = req.body;
+        const { order_status } = req.body;
 
-        const updatedOrderStatus = await editOrder(id, { orderStatus });
+        const updatedOrderStatus = await editOrder(id, { order_status });
 
         res.send(
             updatedOrderStatus
@@ -87,7 +80,7 @@ ordersRouter.patch('/:orderId', requireAdmin, async (req, res, next) => {
 })
 
 // delete order by ID - Admin only
-ordersRouter.delete('/:orderId', requireAdmin, async (req, res, next) => {
+ordersRouter.delete('/:id', requireAdmin, async (req, res, next) => {
     try{
         const { id } = req.params;
         const order = await getOrderById(id);
