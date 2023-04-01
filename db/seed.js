@@ -134,7 +134,7 @@ async function createInitialProducts() {
             { image: "https://cdn.shopify.com/s/files/1/0079/4928/7522/products/dexter-womens-kerrie-grey-twill-bowling-shoes_3b5fbc1e-3566-4284-bea7-a4385a1b280c_2000x.jpg?v=1644969820", brand: "Dexter", name: "Womens Kerrie Grey Twill", description: "Lightweight, stylish basic shoe", price: 69.95, sale: false, clearance: false, category_id: 3 }
         ];
 
-        const products = await Promise.all(dummyProducts.map(createProduct));
+        const products = await Promise.all(dummyProducts.map((product) => createProduct(product)));
 
         console.log("products created:");
         console.log(products)
