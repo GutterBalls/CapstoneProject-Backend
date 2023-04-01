@@ -2,7 +2,8 @@ const {
     createUser,
     createCategory,
     createProduct,
-    createOrder
+    createOrder,
+    createItemsPurchased
 } = require('./')
 
 const client = require('./client');
@@ -12,6 +13,7 @@ async function dropTables() {
     try {
         console.log("Starting to drop tables...");
         await client.query(`
+            DROP TABLE IF EXISTS items_purchased;
             DROP TABLE IF EXISTS orders;
             DROP TABLE IF EXISTS products;
             DROP TABLE IF EXISTS product_category;
@@ -57,6 +59,12 @@ async function createTables() {
             user_id INTEGER REFERENCES users(id),
             order_date DATE,
             order_status VARCHAR(255) DEFAULT 'pending'
+            );
+            CREATE TABLE items_purchased(
+            id SERIAL PRIMARY KEY,
+            product_id INTEGER REFERENCES products(id),
+            order_id INTEGER REFERENCES orders(id),
+            "purchasedPrice" FLOAT NOT NULL
             );
 
         `);
@@ -160,6 +168,31 @@ async function createInitialOrders() {
         throw error;
     }
 }
+
+// Create dummy data for items_purchased table
+async function createInitialItemsPurchased() {
+    try {
+        console.log("Starting to create ItemsPurchased");
+        const dummyItemsPurchased = [
+            { product_id: 1, order_id: 1, purchasedPrice: 167.95},
+            { product_id: 2, order_id: 1, purchasedPrice: 149.95},
+            { product_id: 3, order_id: 2, purchasedPrice: 79.95},
+            { product_id: 4, order_id: 2, purchasedPrice: 279.95}
+        ];
+
+
+        const itemsPurchased = await Promise.all(dummyItemsPurchased.map(createItemsPurchased));
+
+        console.log("ItemsPurchased created:");
+        console.log(itemsPurchased)
+        console.log("Finished creating ItemsPurchased!");
+
+    } catch (error) {
+        console.error("Error creating ItemsPurchased");
+        throw error;
+    }
+}
+
 async function rebuildDB() {
     try {
     client.connect();
@@ -170,6 +203,7 @@ async function rebuildDB() {
     await createInitialCategory();
     await createInitialProducts();
     await createInitialOrders();
+    await createInitialItemsPurchased();
 
 
 
