@@ -3,5 +3,7 @@ module.exports = {
     ...require('./users'), // adds key/values from users.js
     ...require('./products'),
     ...require('./orders'),
-    ...require('./itemsPurchased')
+    ...require('./itemsPurchased'),
+    ...require('./payment'),
+    ...require('./cartItems')
 };
