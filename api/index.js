@@ -72,5 +72,11 @@ apiRouter.use('/orders', ordersRouter);
 const itemsPurchasedRouter = require('./itemsPurchased');
 apiRouter.use('/itemsPurchased', itemsPurchasedRouter);
 
+const paymentRouter = require('./payment');
+apiRouter.use('/payment', paymentRouter);
+
+const cartItemsRouter = require('./cartItems');
+apiRouter.use('/cartItems', cartItemsRouter);
+
 
 module.exports = apiRouter;

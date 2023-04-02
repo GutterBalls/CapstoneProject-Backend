@@ -3,7 +3,9 @@ const {
     createCategory,
     createProduct,
     createOrder,
-    createItemsPurchased
+    createItemsPurchased,
+    createPayment,
+    createCartItem
 } = require('./')
 
 const client = require('./client');
@@ -13,6 +15,8 @@ async function dropTables() {
     try {
         console.log("Starting to drop tables...");
         await client.query(`
+            DROP TABLE IF EXISTS cart_items;
+            DROP TABLE IF EXISTS payment;
             DROP TABLE IF EXISTS items_purchased;
             DROP TABLE IF EXISTS orders;
             DROP TABLE IF EXISTS products;
@@ -65,6 +69,22 @@ async function createTables() {
             product_id INTEGER REFERENCES products(id),
             order_id INTEGER REFERENCES orders(id),
             "purchasedPrice" FLOAT NOT NULL
+            );
+            CREATE TABLE payment(
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            address VARCHAR(255) NOT NULL,
+            city VARCHAR(255) NOT NULL,
+            state VARCHAR(255) NOT NULL,
+            zip_code INTEGER NOT NULL
+            );
+            CREATE TABLE cart_items(
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            order_id INTEGER REFERENCES orders(id),
+            product_id INTEGER REFERENCES products(id),
+            qty INTEGER NOT NULL,
+            price FLOAT NOT NULL
             );
 
         `);
@@ -193,6 +213,53 @@ async function createInitialItemsPurchased() {
     }
 }
 
+// Create dummy data for payment table
+async function createInitialPayment() {
+    try {
+        console.log("Starting to create Payment");
+        const dummyPayment = [
+            { user_id: 1, address: "2912 Overpriced St.", city: "Denver", state: "Colorado", zip_code: 11111},
+            { user_id: 2, address: "5631 Yankee Dr.", city: "New York", state: "New York", zip_code: 22222},
+            { user_id: 3, address: "1774 Hollywood Blvd.", city: "Los Angeles", state: "California", zip_code: 33333},
+            { user_id: 4, address: "6142 Longhorn Ln.", city: "Houston", state: "Texas", zip_code: 44444}
+        ];
+
+
+        const payment = await Promise.all(dummyPayment.map(createPayment));
+
+        console.log("Payment created:");
+        console.log(payment)
+        console.log("Finished creating Payment!");
+
+    } catch (error) {
+        console.error("Error creating Payment");
+        throw error;
+    }
+}
+
+// Create dummy data for cart_items table
+async function createInitialCartItems() {
+    try {
+        console.log("Starting to create cart_items");
+        const dummyCartItems = [
+            { user_id: 1, order_id: 1, product_id: 1, qty: 1, price: 167.95},
+            { user_id: 2, order_id: 2, product_id: 2, qty: 1, price: 149.95},
+            { user_id: 3, order_id: 3, product_id: 3, qty: 1, price: 79.95},
+            { user_id: 4, order_id: 4, product_id: 4, qty: 1, price: 279.95}
+        ];
+
+        const cartItem = await Promise.all(dummyCartItems.map(createCartItem));
+
+        console.log("cartItem created:");
+        console.log(cartItem)
+        console.log("Finished creating cart_items!");
+
+    } catch (error) {
+        console.error("Error creating cart_items");
+        throw error;
+    }
+}
+
 async function rebuildDB() {
     try {
     client.connect();
@@ -204,8 +271,8 @@ async function rebuildDB() {
     await createInitialProducts();
     await createInitialOrders();
     await createInitialItemsPurchased();
-
-
+    await createInitialPayment();
+    await createInitialCartItems();
 
     } catch (error) {
         console.log("Error during rebuildDB")
