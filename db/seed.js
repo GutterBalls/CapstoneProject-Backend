@@ -228,7 +228,7 @@ async function createInitialProducts() {
 
             { image: "/images/bags/storm-rolling_thunder-3-whtplat.jpg", brand: "Storm", name: "Rolling Thunder", description: "Storm has taken their proven high performance 3 ball roller and upgraded the materials to achieve prestige and durability. The Storm Rolling Thunder 3 Ball Roller Signature bag holds nothing back in the style department. This bag has all the high tech features of the Rolling Thunder bags but Storm takes it up a notch in the materials used for this signature bag. 3 (three) ball roller white platinum.", price: 239.95, sale: false, clearance: false, category_id: 2 },
 
-    // SHOES-------------------------------------------
+    // SHOES--------------------------------------------
             { image: "/images/shoes/dexter-c9-m.jpg", brand: "Dexter", name: "C-9 Laser", description: "Dexter's THE C-9 Lazer BOA brings you all of the patented Toehold Hyperflex Engineering and fully loaded technology of our traditional T H E 9 with a new Cloud9 energy return midsole to keep your feet feeling great. The breathable laser cut leather upper helps to keep you cool and comfortable. It's designed with the BOA Fit System with disc lacing for instant adjustability you can customize for your perfect fit and comfort level. Black", price: 259.99, sale: false, clearance: false, category_id: 3 },
 
             { image: "/images/shoes/dexter-groovy-w.jpg", brand: "Dexter", name: "Groovy", description: "Make a statement on the lanes with the Dexter Ultra Groovy Blue Bowling Shoes! The Groovy Blue Abstract design is super fun and even glows in black light! These shoes are designed for ultra comfort too! Rainbow swirl", price: 64.95, sale: false, clearance: false, category_id: 3 },
