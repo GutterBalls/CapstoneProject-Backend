@@ -29,10 +29,11 @@ usersRouter.get('/', requireAdmin, async (req, res) => {
 }) 
 
 // Get user by ID
-usersRouter.get('/:id', requireUser, async (req, res) => {
-    const { id } = req.params;
-    console.log("Req params", id)
-    const user = await getUserById(id);
+usersRouter.get('/me', requireUser, async (req, res) => {
+    
+    console.log("Req user", req.user);
+    
+    const user = await getUserById(req.user.id);
 
     res.send(
         user
