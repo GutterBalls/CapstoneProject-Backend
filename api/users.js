@@ -53,6 +53,7 @@ usersRouter.post('/login', async (req, res, next) => {
 
     try {
         const user = await getUserByUsername(username); 
+        console.log("User..");
         console.log(user); 
         const areTheyTheSame = await bcrypt.compare(password, user.password); 
         if (user && areTheyTheSame) {  
@@ -130,7 +131,7 @@ usersRouter.patch('/:id', requireUser, async (req, res, next) => {
         let hashEmail = await bcrypt.hash(email, saltRounds);
         
 // Update user in DB
-        const updatedUser = await updateUser(id, {username}, hashPassword, hashEmail);
+        const updatedUser = await updateUser(id, {username, password: hashPassword, email: hashEmail});
 
         // const areTheyTheSame = await bcrypt.compare(password, updatedUser.password); 
         // if (updatedUser && areTheyTheSame) {  
