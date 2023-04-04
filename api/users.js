@@ -43,7 +43,7 @@ usersRouter.get('/me', requireUser, async (req, res) => {
 // Login
 usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
-
+    console.log("user api:" + req.body);
     if (!username || !password) {
         next({
         name: "MissingCredentialsError",
@@ -128,8 +128,24 @@ usersRouter.patch('/:id', requireUser, async (req, res, next) => {
         let saltRounds = 10;
         let hashPassword = await bcrypt.hash(password, saltRounds);
         let hashEmail = await bcrypt.hash(email, saltRounds);
+        
 // Update user in DB
         const updatedUser = await updateUser(id, {username}, hashPassword, hashEmail);
+
+        // const areTheyTheSame = await bcrypt.compare(password, updatedUser.password); 
+        // if (updatedUser && areTheyTheSame) {  
+        //     const token = jwt.sign({ 
+        //         id: updatedUser.id, 
+        //         username 
+        //     }, process.env.JWT_SECRET, { 
+        //         expiresIn: "1w" 
+        //     });
+
+        //     res.send({
+        //         message: "You are now logged in!", 
+        //         token: token 
+        //     });
+        // }
 // Send updated user response
         res.send(updatedUser);
     } catch (error) {
