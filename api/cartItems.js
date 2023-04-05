@@ -31,8 +31,9 @@ cartItemsRouter.post('/', async (req, res) => {
 });
 
 // Get all Cart Items
-cartItemsRouter.get('/', async (req, res) => {
-    const cartItems = await getCartWithOrdersAndProducts();
+cartItemsRouter.get('/:userId', async (req, res) => {
+    console.log("cart LINE35", req.params)
+    const cartItems = await getCartWithOrdersAndProducts(req.params.userId);
 
     res.send(
         cartItems

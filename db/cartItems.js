@@ -96,7 +96,7 @@ async function updateCartItem(id, fields = { }) {
 };
 
 // Join table with Products / Orders / Cart Items
-async function getCartWithOrdersAndProducts() {
+async function getCartWithOrdersAndProducts(userId) {
     try {
         const { rows } = await client.query(`
         SELECT * from cart_items
@@ -104,7 +104,8 @@ async function getCartWithOrdersAndProducts() {
         ON cart_items.product_id = products.id
         JOIN orders
         ON cart_items.order_id = orders.id
-        `,);
+        WHERE cart_items.user_id=$1 AND orders.order_status='pending';
+        `, [userId]);
 
         return rows;
 
