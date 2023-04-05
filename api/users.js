@@ -59,7 +59,7 @@ usersRouter.post('/login', async (req, res, next) => {
         if (user && areTheyTheSame) {  
             const token = jwt.sign({ 
                 id: user.id, 
-                username 
+                username
             }, process.env.JWT_SECRET, { 
                 expiresIn: "1w" 
             });
@@ -83,7 +83,7 @@ usersRouter.post('/login', async (req, res, next) => {
 
 // Register
 usersRouter.post('/register', async (req, res, next) => {
-    const { username, password, email, isAdmin } = req.body;
+    const { username, password, email, isAdmin, isActive } = req.body;
     console.log("req body", req.body)
     try {
         const _user = await getUserByUsername(username);
@@ -109,7 +109,8 @@ usersRouter.post('/register', async (req, res, next) => {
             if (user.id) {
                 const token = jwt.sign({ 
                     id: user.id, 
-                    username
+                    username,
+                    isActive
                 }, process.env.JWT_SECRET, {
                     expiresIn: '1w'
                 }); res.send({ 
@@ -156,7 +157,7 @@ usersRouter.patch('/:id', requireUser, async (req, res, next) => {
 });
 
 // // Set user Inactive by user ID
-usersRouter.patch('/:id', requireUser || requireAdmin, async (req, res, next) => {
+usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) => {
     try {
         const user = await getUserById(req.params.id);
 
