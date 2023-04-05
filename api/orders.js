@@ -23,10 +23,10 @@ ordersRouter.get('/', requireAdmin, async (req, res, next) => {
 })
 
 // // Get order by userId - User or Admin
-ordersRouter.get('/:user_id', /* requireUser || requireAdmin, */ async (req, res, next) => {
-    const { user_id } = req.params;
-    const orderByUserId = await getOrderByUserId(user_id);
-
+ordersRouter.get('/me', /* requireUser || requireAdmin, */ async (req, res) => {
+    console.log("Req user", req.user);
+    const orderByUserId = await getOrderByUserId(req.user.id);
+    console.log("orderByUserID:", orderByUserId)
     res.send(
         orderByUserId
     );

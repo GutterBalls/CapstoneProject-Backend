@@ -67,22 +67,23 @@ async function editOrder(id, {order_status}) {
 
 async function getOrderByUserId(user_id) {
     try {
-        const { rows: [ order ]} = await client.query(`
-            SELECT * 
+        console.log("db70- User_id:", user_id);
+        const { rows } = await client.query(`
+            SELECT id, user_id, order_date, order_status 
             FROM orders
-            WHERE user_id = $1;
+            WHERE user_id=$1;
             
         `, [user_id]);
 
-        if (!order) {
+        if (!rows) {
             return ({
                 name: "OrderNotFound",
                 message: "Order Not Found."
             });
         };
 
-        console.log(order);
-        return order;
+        console.log("DB85- rows:", rows);
+        return rows;
 
     } catch (error) {
         throw error;
