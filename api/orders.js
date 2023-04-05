@@ -6,7 +6,7 @@ const { requireUser, requireAdmin } = require('./utils');
 
 const { 
     getAllOrders,
-    getOrderById,
+    getOrderByUserId,
     createOrder,
     editOrder,
     deleteOrder
@@ -22,27 +22,16 @@ ordersRouter.get('/', requireAdmin, async (req, res, next) => {
     
 })
 
-// Get order by ID - User or Admin
-ordersRouter.get('/:id', requireUser || requireAdmin, async (req, res, next) => {
-    const { id } = req.params;
-    const orderById = await getOrderById(id);
+// // Get order by userId - User or Admin
+ordersRouter.get('/:user_id', /* requireUser || requireAdmin, */ async (req, res, next) => {
+    const { user_id } = req.params;
+    const orderByUserId = await getOrderByUserId(user_id);
 
     res.send(
-        orderById
+        orderByUserId
     );
     
 });
-
-// // Get order by userId - User or Admin
-// ordersRouter.get('/user:id', requireUser || requireAdmin, async (req, res, next) => {
-//     const { id } = req.params;
-//     const orderByUserId = await getOrderByUserId(id);
-
-//     res.send(
-//         orderByUserId
-//     );
-    
-// });
 
 // Create new order - User
 ordersRouter.post('/', requireUser || requireAdmin, async (req, res, next) => {
