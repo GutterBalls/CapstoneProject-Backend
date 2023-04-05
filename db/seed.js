@@ -41,7 +41,8 @@ async function createTables() {
             username VARCHAR(255) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
             email VARCHAR(255) UNIQUE NOT NULL,
-            "isAdmin" BOOLEAN DEFAULT false
+            "isAdmin" BOOLEAN DEFAULT false,
+            "isActive" BOOLEAN DEFAULT true
             );
             CREATE TABLE product_category(
             id SERIAL PRIMARY KEY,
@@ -101,10 +102,10 @@ async function createInitialUsers() {
     try {
         console.log("Starting to create users...");
         const dummyUsers = [
-            { username: "albert", password: "bertie99", email: "albert@heyyyy.com", isAdmin: false },
-            { username: "sandra", password: "sandra123", email: "sandy@thebest.com", isAdmin: false },
-            { username: "glamgal", password: "glamgal123", email: "josh@glamorous.com", isAdmin: false },
-            { username: "admin", password: "password", email: "admin@gutter-balls.com", isAdmin: true }
+            { username: "albert", password: "bertie99", email: "albert@heyyyy.com", isAdmin: false, isActive: true },
+            { username: "sandra", password: "sandra123", email: "sandy@thebest.com", isAdmin: false, isActive: true },
+            { username: "glamgal", password: "glamgal123", email: "josh@glamorous.com", isAdmin: false, isActive: true },
+            { username: "admin", password: "password", email: "admin@gutter-balls.com", isAdmin: true, isActive: true }
         ];
         const users = await Promise.all(dummyUsers.map(createUser));
     
@@ -151,13 +152,13 @@ async function createInitialProducts() {
 
             { image: "/images/balls/Brunswick-HP-Mindset.png", brand: "Brunswick", name: "Mindset", description: "Brunswick Mindset is the newest launch to bring perfect ball reaction on your bowling. Having a brand new core shape called Mindset, with dual flip blocks and large center mass the ball will give you a high performance. The ball give you a continuation of overall motion and recovery due to the new core shape. Brunswick Mindset also features DynamiCore and DOT technology making it more durable and strong at performance. The coverstock used for the ball is Evolution Reactive Solid. In a nutshell the ball will carry your clear mindset on pro performance bowling!", price: 184.95, sale: false, clearance: false, category_id: 1 },
 
-            { image: "/images/balls/Brunswick-MP-Attitude.png", brand: "Bruswick", name: "Attitude", description: "Brunswick is bringing back more Attitude! The Brunswick Attitude Control has a urethane pearl coverstock paired with a versatile symmetric Contra core. This strong urethane cover and strong core result in a great urethane option for those with a lower rev rate and higher speed.", price: 139.95, sale: false, clearance: false, category_id: 1 },
+            { image: "/images/balls/Brunswick-MP-Attitude.png", brand: "Brunswick", name: "Attitude", description: "Brunswick is bringing back more Attitude! The Brunswick Attitude Control has a urethane pearl coverstock paired with a versatile symmetric Contra core. This strong urethane cover and strong core result in a great urethane option for those with a lower rev rate and higher speed.", price: 139.95, sale: false, clearance: false, category_id: 1 },
 
-            { image: "/images/balls/Brunswick-MP-Knock_Out.png", brand: "Bruswick", name: "Knock Out", description: "Brunswick is launching the Knock Out Bruiser to the Knock Out line. Buy one of the most reliable bowling ball of Knock Out series. With a Savvy Hook 4.0 Solid Coverstock and Melee core the ball offers plenty of hook, easy length and strong backend motion. The ball is appropriate for medium to heavy oil condition lane.", price: 154.95, sale: false, clearance: false, category_id: 1 },
+            { image: "/images/balls/Brunswick-MP-Knock_Out.png", brand: "Brunswick", name: "Knock Out", description: "Brunswick is launching the Knock Out Bruiser to the Knock Out line. Buy one of the most reliable bowling ball of Knock Out series. With a Savvy Hook 4.0 Solid Coverstock and Melee core the ball offers plenty of hook, easy length and strong backend motion. The ball is appropriate for medium to heavy oil condition lane.", price: 154.95, sale: false, clearance: false, category_id: 1 },
 
-            { image: "/images/balls/Brunswick-LP-Rhino.png", brand: "Bruswick", name: "Rhino", description: "The Brunswick Rhino Metallic Blue Black Pearl Bowling Ball is the perfect bowling ball for those looking at getting into their first reactive resin ball or for those looking for a ball for lighter to medium oil conditions. The perfect bowling ball for those looking at getting into their first reactive resin ball or for those looking for a ball for lighter to medium oil. Looking for an entry-level Rhino Metallic Blue Black Pearl Bowling Ball is not going to react strongly. Then look no further than the Brunswick Rhino bowling ball. This line of bowling balls balances power and control by pairing the R-16 reactive coverstock and a light bulb-shaped core.", price: 87.95, sale: false, clearance: false, category_id: 1 },
+            { image: "/images/balls/Brunswick-LP-Rhino.png", brand: "Brunswick", name: "Rhino", description: "The Brunswick Rhino Metallic Blue Black Pearl Bowling Ball is the perfect bowling ball for those looking at getting into their first reactive resin ball or for those looking for a ball for lighter to medium oil conditions. The perfect bowling ball for those looking at getting into their first reactive resin ball or for those looking for a ball for lighter to medium oil. Looking for an entry-level Rhino Metallic Blue Black Pearl Bowling Ball is not going to react strongly. Then look no further than the Brunswick Rhino bowling ball. This line of bowling balls balances power and control by pairing the R-16 reactive coverstock and a light bulb-shaped core.", price: 87.95, sale: false, clearance: false, category_id: 1 },
 
-            { image: "/images/balls/Brunswick-LP-Twist.png", brand: "Bruswick", name: "Twist", description: "The Brunswick Twist Lavender Lime Bowling Ball is a great option for someone looking to take a step up from a plastic/spare ball. This ball combines the proven R-16 Reactive coverstock with the Twist Low Diff core. This balls proven cover and performance core combination at a new low price point will be an instant winner for newer bowlers and a great upgrade from plastic balls. The Brunswick Twist is a great option for someone looking to take a step up from a plastic spare ball. This combination allows for easy length while maintaining a strong and controllable backend reaction when up against drier lane conditions. The Twist line of bowling balls is great for any age or skill level.", price: 76.95, sale: false, clearance: false, category_id: 1 },
+            { image: "/images/balls/Brunswick-LP-Twist.png", brand: "Brunswick", name: "Twist", description: "The Brunswick Twist Lavender Lime Bowling Ball is a great option for someone looking to take a step up from a plastic/spare ball. This ball combines the proven R-16 Reactive coverstock with the Twist Low Diff core. This balls proven cover and performance core combination at a new low price point will be an instant winner for newer bowlers and a great upgrade from plastic balls. The Brunswick Twist is a great option for someone looking to take a step up from a plastic spare ball. This combination allows for easy length while maintaining a strong and controllable backend reaction when up against drier lane conditions. The Twist line of bowling balls is great for any age or skill level.", price: 76.95, sale: false, clearance: false, category_id: 1 },
 
             { image: "/images/balls/DV8-HP-Brutal_Collision.png", brand: "DV8", name: "Brutal Collision", description: "The Brutal Collision Bowling Ball is a fantastic follow-up of the DV8 Collision and uses an even stronger reacting cover base, HK22. Adding HK22 to the Collision core and a polished, solid cover creates even stronger hook and a devastating backend reaction. HK22 will create more color clarity, and the Brutal Collision is bold and vibrant. This ball will stand out for its look and also its performance on the lanes.", price: 184.95, sale: false, clearance: false, category_id: 1 },
 
