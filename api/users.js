@@ -14,8 +14,8 @@ const {
     getAllUsers,
     getUserById,
     getUserByUsername,
-    deleteUser,
-    updateUser
+    updateUser,
+    deleteUser
 } = require('../db');
 
 
@@ -103,7 +103,8 @@ usersRouter.post('/register', async (req, res, next) => {
             username,
             password,
             email,
-            isAdmin
+            isAdmin,
+            isActive
         });
             if (user.id) {
                 const token = jwt.sign({ 
@@ -154,15 +155,15 @@ usersRouter.patch('/:id', requireUser, async (req, res, next) => {
     }
 });
 
-// // Delete user by ID
-usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) => {
+// // Set user Inactive by user ID
+usersRouter.patch('/:id', requireUser || requireAdmin, async (req, res, next) => {
     try {
         const user = await getUserById(req.params.id);
 
         if (user.id === req.user.id || req.user.isAdmin == true) {
-            const deletedUser = await deleteUser(user.id, { active: false });
+            const disableUser = await updateUser(user.id, { isActive: false });
             
-            res.send(deletedUser);
+            res.send(disableUser);
 
         } else {
                 res.send(user ? { 
