@@ -20,30 +20,6 @@ async function createOrder( {user_id, order_date, order_status} ) {
     };
 };
 
-// Get an order by order id.
-async function getOrderById(id) {
-    try {
-        const { rows: [ order ]} = await client.query(`
-            SELECT *
-            FROM orders
-            WHERE id=$1;
-        `, [id]);
-
-        if (!order) {
-            return ({
-                name: "OrderNotFound",
-                message: "Order Not Found."
-            });
-        };
-
-        console.log(order);
-        return order;
-
-    } catch (error) {
-        throw "Error w/ getOrderById", error;
-    };
-};
-
 // Get all orders.
 async function getAllOrders() {
     try {
@@ -89,13 +65,14 @@ async function editOrder(id, {order_status}) {
     };
 };
 
-async function getOrderByUserId(userId) {
+async function getOrderByUserId(user_id) {
     try {
         const { rows: [ order ]} = await client.query(`
             SELECT * 
             FROM orders
-            WHERE user_id=$1
-        `, [userId]);
+            WHERE user_id = $1;
+            
+        `, [user_id]);
 
         if (!order) {
             return ({
@@ -114,7 +91,6 @@ async function getOrderByUserId(userId) {
 
 module.exports = {
     getAllOrders,
-    getOrderById,
     getOrderByUserId,
     createOrder,
     editOrder,
