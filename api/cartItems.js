@@ -9,7 +9,8 @@ const {
     getAllCartItems,
     getCartItemById,
     deleteCartItem,
-    updateCartItem
+    updateCartItem,
+    getCartWithOrdersAndProducts
 
 } = require('../db');
 
@@ -31,7 +32,7 @@ cartItemsRouter.post('/', async (req, res) => {
 
 // Get all Cart Items
 cartItemsRouter.get('/', async (req, res) => {
-    const cartItems = await getAllCartItems();
+    const cartItems = await getCartWithOrdersAndProducts();
 
     res.send(
         cartItems
@@ -51,7 +52,19 @@ cartItemsRouter.get('/:id', async (req, res) => {
         throw error;
     };
 });
-
+// Get Cart Join table
+cartItemsRouter.get('/:cartId/join', async (req, res, next) => {
+    const {cartId} = req.params;
+    try {
+        const getCart = await getCartWithOrdersAndProducts(cartId);
+        res.send(
+            getCart
+        );
+        
+    } catch (error) {
+        throw error;
+    }
+})
 // Delete Cart Items by ID
 cartItemsRouter.delete('/:id', async (req, res) => {
     try{

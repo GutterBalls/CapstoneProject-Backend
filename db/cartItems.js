@@ -93,6 +93,24 @@ async function updateCartItem(id, fields = { }) {
     } catch (error) {
         throw error;
     }
+};
+
+// Join table with Products / Orders / Cart Items
+async function getCartWithOrdersAndProducts() {
+    try {
+        const { rows } = await client.query(`
+        SELECT * from cart_items
+        JOIN products
+        ON cart_items.product_id = products.id
+        JOIN orders
+        ON cart_items.order_id = orders.id
+        `,);
+
+        return rows;
+
+    } catch (error) {
+        throw error;
+    }
 }
 
 module.exports = {
@@ -100,5 +118,6 @@ module.exports = {
     getAllCartItems,
     getCartItemById,
     deleteCartItem,
-    updateCartItem
+    updateCartItem,
+    getCartWithOrdersAndProducts
 }
