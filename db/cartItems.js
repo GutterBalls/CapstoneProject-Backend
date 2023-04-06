@@ -9,7 +9,7 @@ async function createCartItem( {order_id, product_id, qty} ) {
             SELECT $1, $2, $3, products.price
             FROM products
             WHERE products.id = $2
-            RETURNING *
+            RETURNING *;
         `, [order_id, product_id, qty]);
 
 
@@ -102,14 +102,15 @@ async function updateCartItem(id, fields = { }) {
 async function getCartWithOrdersAndProducts(userId) {
     try {
         const { rows } = await client.query(`
-        SELECT * from cart_items
+        SELECT cart_items.id FROM cart_items
         JOIN products
         ON cart_items.product_id = products.id
         JOIN orders
         ON cart_items.order_id = orders.id
         WHERE orders.user_id=$1 AND orders.order_status=false;
         `, [userId]);
-
+        console.log("rows 112")
+        console.log(rows)
         return rows;
 
     } catch (error) {

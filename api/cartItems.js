@@ -34,25 +34,26 @@ cartItemsRouter.post('/', async (req, res) => {
 cartItemsRouter.get('/:userId', async (req, res) => {
     console.log("cart LINE35", req.params)
     const cartItems = await getCartWithOrdersAndProducts(req.params.userId);
-
+    console.log("api cart line 37")
+    console.log(cartItems)
     res.send(
         cartItems
     );
 });
 
-// Get Cart Items by ID
-cartItemsRouter.get('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const cartItemsById = await getCartItemById(id);
-        res.send(
-            cartItemsById
-        );
+// // Get Cart Items by ID
+// cartItemsRouter.get('/:id', async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const cartItemsById = await getCartItemById(id);
+//         res.send(
+//             cartItemsById
+//         );
         
-    } catch (error) {
-        throw error;
-    };
-});
+//     } catch (error) {
+//         throw error;
+//     };
+// });
 // Get Cart Join table
 cartItemsRouter.get('/:cartId/join', async (req, res, next) => {
     const {cartId} = req.params;
@@ -69,9 +70,12 @@ cartItemsRouter.get('/:cartId/join', async (req, res, next) => {
 // Delete Cart Items by ID
 cartItemsRouter.delete('/:id', async (req, res) => {
     try{
+        console.log("Line 72 api delete req params", req.params)
         const { id } = req.params;
+        console.log("Line 74 api delete id", id)
         const cartItem = await getCartItemById(id);
-        if(cartItem.id){
+        console.log("Line 76 api cartItem", cartItem)
+        if(cartItem.id == id){
             const deletedCartItem = await deleteCartItem(id);
                 res.send(
                     deletedCartItem
