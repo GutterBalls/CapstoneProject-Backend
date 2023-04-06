@@ -1,14 +1,17 @@
 const client = require('./client');
 
 // Create Cart Item
-async function createCartItem( {user_id, order_id, product_id, qty, price} ) {
+async function createCartItem( {order_id, product_id, qty} ) {
     try {
         console.log("starting createCartItem");
-        const { rows: [ cartItem ] } = await client.query(`
-            INSERT INTO cart_items(user_id, order_id, product_id, qty, price)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING *;
-        `, [user_id, order_id, product_id, qty, price]);
+        const { rows: [cartItem] } = await client.query(`
+            INSERT INTO cart_items(order_id, product_id, qty, price)
+            SELECT $1, $2, $3, products.price
+            FROM products
+            WHERE products.id = $2
+            RETURNING *
+        `, [order_id, product_id, qty]);
+
 
 
         console.log("finished createCartItem");
