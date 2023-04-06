@@ -54,7 +54,7 @@ async function createTables() {
             brand VARCHAR(255) NOT NULL,
             name VARCHAR(255) NOT NULL,
             description TEXT NOT NULL,
-            price FLOAT UNIQUE NOT NULL,
+            price FLOAT,
             sale BOOLEAN DEFAULT false,
             clearance BOOLEAN DEFAULT false,
             category_id INTEGER REFERENCES product_category(id)
@@ -78,7 +78,7 @@ async function createTables() {
             order_id INTEGER REFERENCES orders(id),
             product_id INTEGER REFERENCES products(id),
             qty INTEGER NOT NULL,
-            price FLOAT UNIQUE NOT NULL REFERENCES products(price)
+            price FLOAT
             );
 
         `);

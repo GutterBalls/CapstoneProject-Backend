@@ -31,8 +31,9 @@ cartItemsRouter.post('/', async (req, res) => {
 });
 
 // Get all Cart Items
-cartItemsRouter.get('/', async (req, res) => {
-    const cartItems = await getCartWithOrdersAndProducts();
+cartItemsRouter.get('/:userId', async (req, res) => {
+    console.log("cart LINE35", req.params)
+    const cartItems = await getCartWithOrdersAndProducts(req.params.userId);
 
     res.send(
         cartItems
@@ -94,9 +95,9 @@ cartItemsRouter.delete('/:id', async (req, res) => {
 cartItemsRouter.patch('/:id', async (req, res) => {
     try{
         const { id } = req.params;
-        const { user_id, order_id, product_id, qty, price } = req.body;
+        const { order_id, product_id, qty, price } = req.body;
 
-        const updatedCartItem = await updateCartItem(id, { user_id, order_id, product_id, qty, price });
+        const updatedCartItem = await updateCartItem(id, { order_id, product_id, qty, price });
 
         res.send(
             updatedCartItem
