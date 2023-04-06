@@ -107,7 +107,7 @@ async function getCartWithOrdersAndProducts(userId) {
         ON cart_items.product_id = products.id
         JOIN orders
         ON cart_items.order_id = orders.id
-        WHERE cart_items.user_id=$1 AND orders.order_status='pending';
+        WHERE orders.user_id=$1 AND orders.order_status=false;
         `, [userId]);
 
         return rows;

@@ -95,9 +95,9 @@ cartItemsRouter.delete('/:id', async (req, res) => {
 cartItemsRouter.patch('/:id', async (req, res) => {
     try{
         const { id } = req.params;
-        const { user_id, order_id, product_id, qty, price } = req.body;
+        const { order_id, product_id, qty, price } = req.body;
 
-        const updatedCartItem = await updateCartItem(id, { user_id, order_id, product_id, qty, price });
+        const updatedCartItem = await updateCartItem(id, { order_id, product_id, qty, price });
 
         res.send(
             updatedCartItem

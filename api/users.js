@@ -15,7 +15,8 @@ const {
     getUserById,
     getUserByUsername,
     updateUser,
-    deleteUser
+    deleteUser,
+    createOrder
 } = require('../db');
 
 
@@ -106,6 +107,9 @@ usersRouter.post('/register', async (req, res, next) => {
             isAdmin,
             isActive
         });
+        
+        const newOrder = await createOrder({user_id: user.id, order_date: new Date});
+        console.log("New account order", newOrder)
             if (user.id) {
                 const token = jwt.sign({ 
                     id: user.id, 
