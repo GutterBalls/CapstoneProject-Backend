@@ -124,7 +124,7 @@ usersRouter.post('/register', async (req, res, next) => {
 });
 
 // Edit username and password
-usersRouter.patch('/:id', requireUser, async (req, res, next) => {
+usersRouter.patch('/:id', requireUser || requireAdmin, async (req, res, next) => {
     try{
         const { id } = req.params;
         const { username, password, email } = req.body;
