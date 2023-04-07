@@ -17,9 +17,9 @@ const {
 // Create Cart Item - 
 cartItemsRouter.post('/', async (req, res) => {
     try{
-        const { order_id, product_id, qty } = req.body;
+        const { user_id, order_id, product_id, qty } = req.body;
 
-        const createdCartItem = await createCartItem({order_id, product_id, qty});
+        const createdCartItem = await createCartItem({user_id, order_id, product_id, qty});
 
         res.send(
             createdCartItem
