@@ -16,16 +16,16 @@ const {
 // Create payment - 
 paymentRouter.post('/', async (req, res) => {
     try{
-        const { user_id, address, city, state, zip_code} = req.body;
+        const {user_id, cardnum, exp, cvv, name, address, city, state, zip_code} = req.body;
 
-        const createdPayment = await createPayment({user_id, address, city, state, zip_code});
+        const createdPayment = await createPayment({user_id, cardnum, exp, cvv, name, address, city, state, zip_code});
 
         res.send(
             createdPayment
         );
 
     } catch (error) {
-        throw(error);
+        throw("Error w/ api create payment",error);
     };
 });
 

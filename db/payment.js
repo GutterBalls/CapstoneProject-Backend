@@ -1,21 +1,31 @@
 const client = require('./client');
+const bcrypt = require("bcrypt");
 
 // Create payment
-async function createPayment( {user_id, address, city, state, zip_code} ) {
-    
+async function createPayment( {user_id, cardnum, exp, cvv, name, address, city, state, zip_code} ) {
     try {
-        console.log("starting createPayment");
-        const { rows: [ payment ] } = await client.query(`
-            INSERT INTO payment(user_id, address, city, state, zip_code)
-            VALUES ($1, $2, $3, $4, $5)
+        console.log("starting db createPayment");
+        let saltRounds = 10;
+        let hashCardnum = await bcrypt.hash(cardnum.toString(), saltRounds);
+        let hashExp = await bcrypt.hash(exp.toString(), saltRounds);
+        let hashCvv = await bcrypt.hash(cvv.toString(), saltRounds);
+        let hashName = await bcrypt.hash(name, saltRounds);
+        let hashAddress = await bcrypt.hash(address, saltRounds);
+        let hashCity = await bcrypt.hash(city, saltRounds);
+        let hashState = await bcrypt.hash(state, saltRounds);
+        let hashZip = await bcrypt.hash(zip_code.toString(), saltRounds);
+
+        const { rows } = await client.query(`
+            INSERT INTO payment(user_id, cardnum, exp, cvv, name, address, city, state, zip_code)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING *;
-        `, [user_id, address, city, state, zip_code]);
+        `, [user_id, hashCardnum, hashExp, hashCvv, hashName, hashAddress, hashCity, hashState, hashZip]);
 
 
-        console.log("finished createPayment");
-        return payment;
+        console.log("finished db createPayment");
+        return rows[0];
     } catch (error) {
-        throw "Error w/ createPayment", error;
+        throw "Error w/ db createPayment", error;
     };
 };
 
