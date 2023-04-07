@@ -68,13 +68,18 @@ async function createTables() {
             CREATE TABLE payment(
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
+            cardnum VARCHAR(255),
+            exp VARCHAR(255),
+            cvv VARCHAR(255),
+            name VARCHAR(255),
             address VARCHAR(255) NOT NULL,
             city VARCHAR(255) NOT NULL,
             state VARCHAR(255) NOT NULL,
-            zip_code INTEGER NOT NULL
+            zip_code VARCHAR(255) NOT NULL
             );
             CREATE TABLE cart_items(
             id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
             order_id INTEGER REFERENCES orders(id),
             product_id INTEGER REFERENCES products(id),
             qty INTEGER NOT NULL,
@@ -297,7 +302,7 @@ async function createInitialOrders() {
             { user_id: 1, order_date: new Date },
             { user_id: 2, order_date: new Date },
             { user_id: 3, order_date: new Date },
-            { user_id: 1, order_date: new Date }
+            { user_id: 4, order_date: new Date }
         ];
 
         const orders = await Promise.all(dummyOrders.map(createOrder));
@@ -341,10 +346,10 @@ async function createInitialPayment() {
     try {
         console.log("Starting to create Payment");
         const dummyPayment = [
-            { user_id: 1, address: "2912 Overpriced St.", city: "Denver", state: "Colorado", zip_code: 11111},
-            { user_id: 2, address: "5631 Yankee Dr.", city: "New York", state: "New York", zip_code: 22222},
-            { user_id: 3, address: "1774 Hollywood Blvd.", city: "Los Angeles", state: "California", zip_code: 33333},
-            { user_id: 4, address: "6142 Longhorn Ln.", city: "Houston", state: "Texas", zip_code: 44444}
+            { user_id: 1, cardnum: 4444111199992222, exp: 1226, cvv: 499, name: "User1name", address: "2912 Overpriced St.", city: "Denver", state: "CO", zip_code: 11111},
+            { user_id: 2, cardnum: 2222321065409870, exp: 0124, cvv: 223, name: "User2name", address: "5631 Yankee Dr.", city: "New York", state: "NY", zip_code: 22222},
+            { user_id: 3, cardnum: 5555000055550000, exp: 0923, cvv: 355, name: "User3name", address: "1774 Hollywood Blvd.", city: "Los Angeles", state: "CA", zip_code: 33333},
+            { user_id: 4, cardnum: 333312345678910, exp: 0124, cvv: 123, name: "User4name", address: "6142 Longhorn Ln.", city: "Houston", state: "TX", zip_code: 44444}
         ];
 
 
@@ -355,7 +360,7 @@ async function createInitialPayment() {
         console.log("Finished creating Payment!");
 
     } catch (error) {
-        console.error("Error creating Payment");
+        console.error("Error w/ seed createInitialPayment");
         throw error;
     }
 }
@@ -365,10 +370,10 @@ async function createInitialCartItems() {
     try {
         console.log("Starting to create cart_items");
         const dummyCartItems = [
-            { order_id: 1, product_id: 1, qty: 1},
-            { order_id: 2, product_id: 2, qty: 1},
-            { order_id: 3, product_id: 3, qty: 1},
-            { order_id: 4, product_id: 4, qty: 1}
+            { user_id:1, order_id: 1, product_id: 1, qty: 1},
+            { user_id:2, order_id: 2, product_id: 2, qty: 1},
+            { user_id:3, order_id: 3, product_id: 3, qty: 1},
+            { user_id:4, order_id: 4, product_id: 4, qty: 1}
         ];
 
         const cartItem = await Promise.all(dummyCartItems.map(createCartItem));
