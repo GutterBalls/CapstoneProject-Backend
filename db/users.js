@@ -5,7 +5,7 @@ const { getProductById } = require("./products");
 // Create a user.
 async function createUser({ username, password, email, isAdmin, isActive }) {
     try {
-    console.log("starting createUser");
+    // console.log("starting createUser");
     let saltRounds = 10;
     let hashPassword = await bcrypt.hash(password, saltRounds);
     let hashEmail = await bcrypt.hash(email, saltRounds);
@@ -17,7 +17,7 @@ async function createUser({ username, password, email, isAdmin, isActive }) {
         RETURNING *;
     `, [username, hashPassword, hashEmail, isAdmin, isActive]);
 
-        console.log("finished createUser");
+        // console.log("finished createUser");
     return user;
 
     } catch (error) {
@@ -64,7 +64,7 @@ async function getUserById(id) {
             });
         };
 
-        console.log("DB getUser Function user", user);
+        // console.log("DB getUser Function user", user);
         return user;
 
     } catch (error) {

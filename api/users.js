@@ -32,7 +32,7 @@ usersRouter.get('/', requireAdmin, async (req, res) => {
 // Get user by ID
 usersRouter.get('/me', requireUser, async (req, res) => {
     
-    console.log("Req user", req.user);
+    // console.log("Req user", req.user);
     
     const user = await getUserById(req.user.id);
 
@@ -44,7 +44,7 @@ usersRouter.get('/me', requireUser, async (req, res) => {
 // Login
 usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
-    console.log("user api:" + req.body);
+    // console.log("user api:" + req.body);
     if (!username || !password) {
         next({
         name: "MissingCredentialsError",
@@ -54,8 +54,8 @@ usersRouter.post('/login', async (req, res, next) => {
 
     try {
         const user = await getUserByUsername(username); 
-        console.log("User..");
-        console.log(user); 
+        // console.log("User..");
+        // console.log(user); 
         const areTheyTheSame = await bcrypt.compare(password, user.password); 
         if (user && areTheyTheSame) {  
             const token = jwt.sign({ 
@@ -85,10 +85,10 @@ usersRouter.post('/login', async (req, res, next) => {
 // Register
 usersRouter.post('/register', async (req, res, next) => {
     const { username, password, email, isAdmin, isActive } = req.body;
-    console.log("req body", req.body)
+    // console.log("req body", req.body)
     try {
         const _user = await getUserByUsername(username);
-        console.log("User from getUser function", _user)
+        // console.log("User from getUser function", _user)
         if (_user) {
             res.send({
                 name: 'UserExistsError',
@@ -109,7 +109,7 @@ usersRouter.post('/register', async (req, res, next) => {
         });
         
         const newOrder = await createOrder({user_id: user.id, order_date: new Date});
-        console.log("New account order", newOrder)
+        // console.log("New account order", newOrder)
             if (user.id) {
                 const token = jwt.sign({ 
                     id: user.id, 
@@ -165,10 +165,15 @@ usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) =
     try {
         const user = await getUserById(req.params.id);
 
-        if (user.id === req.user.id || req.user.isAdmin == true) {
-            const disableUser = await updateUser(user.id, { isActive: false });
-            
-            res.send(disableUser);
+        if (user.id === req.user.id || req.user.isAdmin === true) {
+            console.log("req.user.isActive :", req.user.isActive);
+            if(req.user.isActive === true){
+                const disableUser = await updateUser(user.id, { isActive: false });
+                res.send(disableUser);
+            } else{
+                const enableUser = await updateUser(user.id, { isActive: true });
+                res.send(enableUser);
+            }
 
         } else {
                 res.send(user ? { 
