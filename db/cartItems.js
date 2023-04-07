@@ -1,16 +1,16 @@
 const client = require('./client');
 
 // Create Cart Item
-async function createCartItem( {order_id, product_id, qty} ) {
+async function createCartItem( {user_id, order_id, product_id, qty} ) {
     try {
         console.log("starting createCartItem");
         const { rows: [cartItem] } = await client.query(`
-            INSERT INTO cart_items(order_id, product_id, qty, price)
-            SELECT $1, $2, $3, products.price
+            INSERT INTO cart_items(user_id, order_id, product_id, qty, price)
+            SELECT $1, $2, $3, $4, products.price
             FROM products
-            WHERE products.id = $2
+            WHERE products.id = $3
             RETURNING *;
-        `, [order_id, product_id, qty]);
+        `, [user_id, order_id, product_id, qty]);
 
 
 
@@ -102,12 +102,12 @@ async function updateCartItem(id, fields = { }) {
 async function getCartWithOrdersAndProducts(userId) {
     try {
         const { rows } = await client.query(`
-        SELECT cart_items.id FROM cart_items
+        SELECT cart_items.id, cart_items.order_id, cart_items.product_id, cart_items.qty, products.price, products.brand, products.name, products.image FROM cart_items
         JOIN products
         ON cart_items.product_id = products.id
         JOIN orders
         ON cart_items.order_id = orders.id
-        WHERE orders.user_id=$1 AND orders.order_status=false;
+        WHERE cart_items.user_id=$1 AND orders.order_status=false;
         `, [userId]);
         console.log("rows 112")
         console.log(rows)
