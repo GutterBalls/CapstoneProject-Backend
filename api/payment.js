@@ -9,12 +9,15 @@ const {
     getAllPayments,
     getPaymentById,
     deletePayment,
-    updatePayment
+    updatePayment,
+    createOrder,
+    editOrder,
+    getOrderByUserId
 
 } = require('../db');
 
 // Create payment - 
-paymentRouter.post('/', async (req, res) => {
+paymentRouter.post('/', requireUser, async (req, res) => {
     try{
         const {user_id, cardnum, exp, cvv, name, address, city, state, zip_code} = req.body;
 
@@ -23,6 +26,16 @@ paymentRouter.post('/', async (req, res) => {
         res.send(
             createdPayment
         );
+        if (createdPayment) {
+            const getUserOrders = await getOrderByUserId(req.user.id)
+            console.log("getUsersOrders", getUserOrders);
+            const grabFalseOrder = getUserOrders.filter((order) => order.order_status === false)
+            console.log("grabFalseOrder", grabFalseOrder);
+            const editedOrder = await editOrder({id: grabFalseOrder[0].id, order_status: true})
+            const newOrder = await createOrder({user_id: req.user.id, order_date: new Date});
+            console.log(editedOrder);
+            console.log(newOrder);
+        };
 
     } catch (error) {
         throw("Error w/ api create payment",error);

@@ -48,7 +48,7 @@ async function deleteOrder(id) {
 };
 
 // Update an order by order id.
-async function editOrder(id, {order_status}) {
+async function editOrder( {id, order_status}) {
     try {
         const { rows: [ order ] } = await client.query(`
             UPDATE orders
