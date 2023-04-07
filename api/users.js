@@ -167,7 +167,7 @@ usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) =
 
         if (user.id === req.user.id || req.user.isAdmin === true) {
             console.log("req.user.isActive :", req.user.isActive);
-            if(req.user.isActive === true){
+            if(user.isActive === true){
                 const disableUser = await updateUser(user.id, { isActive: false });
                 res.send(disableUser);
             } else{
