@@ -79,6 +79,7 @@ async function createTables() {
             );
             CREATE TABLE cart_items(
             id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
             order_id INTEGER REFERENCES orders(id),
             product_id INTEGER REFERENCES products(id),
             qty INTEGER NOT NULL,
@@ -301,7 +302,7 @@ async function createInitialOrders() {
             { user_id: 1, order_date: new Date },
             { user_id: 2, order_date: new Date },
             { user_id: 3, order_date: new Date },
-            { user_id: 1, order_date: new Date }
+            { user_id: 4, order_date: new Date }
         ];
 
         const orders = await Promise.all(dummyOrders.map(createOrder));
@@ -369,10 +370,10 @@ async function createInitialCartItems() {
     try {
         console.log("Starting to create cart_items");
         const dummyCartItems = [
-            { order_id: 1, product_id: 1, qty: 1},
-            { order_id: 2, product_id: 2, qty: 1},
-            { order_id: 3, product_id: 3, qty: 1},
-            { order_id: 4, product_id: 4, qty: 1}
+            { user_id:1, order_id: 1, product_id: 1, qty: 1},
+            { user_id:2, order_id: 2, product_id: 2, qty: 1},
+            { user_id:3, order_id: 3, product_id: 3, qty: 1},
+            { user_id:4, order_id: 4, product_id: 4, qty: 1}
         ];
 
         const cartItem = await Promise.all(dummyCartItems.map(createCartItem));
