@@ -18,13 +18,22 @@ const {
 cartItemsRouter.post('/', async (req, res) => {
     try{
         const { user_id, order_id, product_id, qty } = req.body;
-
-        const createdCartItem = await createCartItem({user_id, order_id, product_id, qty});
-
-        res.send(
-            createdCartItem
-        );
-
+        const currentUsersCart = await getCartWithOrdersAndProducts(user_id);
+        console.log("Current users cart API line 22", currentUsersCart);
+        console.log("Req.body p_id", product_id);
+        const hasProduct = currentUsersCart.some(product => product.product_id === product_id)
+        if (hasProduct) {
+            console.log("Contains object with product_id = 1", hasProduct)
+            res.send("Product already exists in cart error.")
+        } else {
+            console.log("Does not contain product_id = 1", hasProduct)
+            const createdCartItem = await createCartItem({user_id, order_id, product_id, qty});
+            console.log("inside else cart API")
+            res.send(
+                createdCartItem
+            );
+        };
+       
     } catch (error) {
         throw(error);
     };
