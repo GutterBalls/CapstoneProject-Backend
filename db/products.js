@@ -71,18 +71,8 @@ async function getAllProducts() {
     };
 };
 
-async function deleteProduct(id) {
-    try {
-        await client.query(`
-            DELETE FROM products
-            WHERE id=$1;
-        `, [id]);
-        
-        return `Deleted product id: ${id}`
-    } catch (error) {
-        throw error;
-    };
-};
+
+
 
 async function updateProduct(id, fields={}) {
     const setString = Object.keys(fields).map(
