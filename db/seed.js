@@ -57,7 +57,7 @@ async function createTables() {
             price FLOAT,
             sale BOOLEAN DEFAULT false,
             clearance BOOLEAN DEFAULT false,
-            category_id INTEGER REFERENCES product_category(id)
+            category_id INTEGER REFERENCES product_category(id) ON DELETE CASCADE
             );
             CREATE TABLE orders(
             id SERIAL PRIMARY KEY,
@@ -81,7 +81,7 @@ async function createTables() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             order_id INTEGER REFERENCES orders(id),
-            product_id INTEGER REFERENCES products(id),
+            product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
             qty INTEGER NOT NULL,
             price FLOAT
             );

@@ -73,12 +73,12 @@ async function getAllProducts() {
 
 async function deleteProduct(id) {
     try {
-        await client.query(`
+        const { rows } = await client.query(`
             DELETE FROM products
             WHERE id=$1;
         `, [id]);
         
-        return `Deleted product id: ${id}`
+        return rows
     } catch (error) {
         throw error;
     };
