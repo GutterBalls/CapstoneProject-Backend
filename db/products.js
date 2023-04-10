@@ -35,6 +35,7 @@ async function createProduct({image, brand, name, description, price, sale, clea
     };
 };
 
+// GET product by id.
 async function getProductById(id) {
     try {
         const { rows: [ product ]} = await client.query(`
@@ -58,6 +59,7 @@ async function getProductById(id) {
     };
 };
 
+// GET all products.
 async function getAllProducts() {
     try {
         const { rows } = await client.query(`
@@ -71,6 +73,7 @@ async function getAllProducts() {
     };
 };
 
+// DELETE product by id.
 async function deleteProduct(id) {
     try {
         const { rows } = await client.query(`
@@ -84,7 +87,7 @@ async function deleteProduct(id) {
     };
 };
 
-
+// UPDATE product by id.
 async function updateProduct(id, fields={}) {
     const setString = Object.keys(fields).map(
         (key, index) => `"${ key }"=$${ index + 1 }`
@@ -109,6 +112,7 @@ async function updateProduct(id, fields={}) {
     }
 }
 
+// GET product by name. 
 async function getProductByName(name) {
     console.log("Function is running");
     try {
@@ -126,32 +130,6 @@ async function getProductByName(name) {
     };
 };
 
-async function createReview({username, product_id, product_brand, product_name, rating, review}) {
-    try {
-        const { rows: [singleReview]} = await client.query(`
-            INSERT INTO reviews(username, product_id, product_brand, product_name, rating, review)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *;
-        `, [username, product_id, product_brand, product_name, rating, review]);
-        return singleReview
-    } catch (error) {
-        throw error;
-    };
-};
-async function getAllReviews () {
-    try {
-        const { rows } = await client.query(`
-            SELECT *
-            FROM reviews;
-        `)
-        console.log("ROWS DB PRODUCTS LINE 150", rows)
-        return rows;
-    } catch (error) {
-        throw error;
-    }
-}
-
-
 module.exports = {
     createCategory,
     createProduct,
@@ -159,7 +137,5 @@ module.exports = {
     getAllProducts,
     deleteProduct,
     updateProduct,
-    getProductByName,
-    createReview,
-    getAllReviews
+    getProductByName
 }

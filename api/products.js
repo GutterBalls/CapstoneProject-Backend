@@ -12,8 +12,6 @@ const {
     createProduct,
     updateProduct,
     deleteProduct,
-    createReview,
-    getAllReviews
 } = require('../db');
 
 // Get all products
@@ -106,32 +104,5 @@ productsRouter.delete('/:id', requireAdmin, async (req, res) => {
         throw error;
     };
 });
-
-productsRouter.post('/reviews', async (req, res) => {
-    try {
-        const { username, product_id, product_brand, product_name, rating, review}  = req.body;
-        console.log("api products username", username)
-        const productReview = await createReview({username, product_id, product_brand, product_name, rating, review})
-        res.send(
-            productReview
-        );
-
-    } catch (error) {
-        throw error;
-    };
-});
-
-productsRouter.get('/reviews', async (req, res) => {
-    try {
-        const allReviews = await getAllReviews();
-
-        res.send(
-            allReviews
-        );
-
-    } catch (error) {
-        throw error;
-    }
-})
 
 module.exports = productsRouter;
