@@ -26,7 +26,7 @@ function requireUser(req, res, next) {
 
 function requireAdmin(req, res, next) {
     console.log("Req user", req.user);
-    if (!req.user.isAdmin === true){
+    if (req.user.isAdmin !== true){
         res.send({
             message: "Error, you are not an admin."
         });
