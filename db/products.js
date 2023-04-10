@@ -126,6 +126,32 @@ async function getProductByName(name) {
     };
 };
 
+async function createReview({username, product_id, product_brand, product_name, rating, review}) {
+    try {
+        const { rows: [singleReview]} = await client.query(`
+            INSERT INTO reviews(username, product_id, product_brand, product_name, rating, review)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *;
+        `, [username, product_id, product_brand, product_name, rating, review]);
+        return singleReview
+    } catch (error) {
+        throw error;
+    };
+};
+async function getAllReviews () {
+    try {
+        const { rows } = await client.query(`
+            SELECT *
+            FROM reviews;
+        `)
+        console.log("ROWS DB PRODUCTS LINE 150", rows)
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 module.exports = {
     createCategory,
     createProduct,
@@ -133,5 +159,7 @@ module.exports = {
     getAllProducts,
     deleteProduct,
     updateProduct,
-    getProductByName
+    getProductByName,
+    createReview,
+    getAllReviews
 }

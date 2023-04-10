@@ -15,6 +15,7 @@ async function dropTables() {
     try {
         console.log("Starting to drop tables...");
         await client.query(`
+            DROP TABLE IF EXISTS reviews;
             DROP TABLE IF EXISTS cart_items;
             DROP TABLE IF EXISTS payment;
             DROP TABLE IF EXISTS items_purchased;
@@ -85,7 +86,15 @@ async function createTables() {
             qty INTEGER NOT NULL,
             price FLOAT
             );
-
+            CREATE TABLE reviews(
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            product_id INTEGER NOT NULL,
+            product_brand VARCHAR(255) NOT NULL,
+            product_name VARCHAR(255) NOT NULL,
+            rating INTEGER NOT NULL,
+            review TEXT NOT NULL
+            );
         `);
         console.log("Finished building tables!");
 
