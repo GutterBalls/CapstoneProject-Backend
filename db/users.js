@@ -30,13 +30,18 @@ async function getUserByUsername(username) {
 
     try {
 
-        const { rows: [user] } = await client.query(`
+        const { rows } = await client.query(`
             SELECT *
             FROM users
             WHERE username=$1;
         `, [username]);
 
-        return user;
+        if (rows.length) {
+            return rows[0]
+        } else {
+            return undefined
+        }
+        
 
     } catch (error) {
         throw error;
