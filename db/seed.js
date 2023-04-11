@@ -268,7 +268,7 @@ async function createInitialProducts() {
     // ACCESSORIES-------------------------------------------
             { image: "/images/accessories/genesis-excel-bowling-tape.jpg", brand: "Genesis", name: "Excel Performance Tape", description: "Don't know which tape is best for you? Try out this sample pack that includes pre-cut pieces of all of them! 10 total pieces: (2) Excel 1 Red: Fastest release, (2) Excel 2 Blue: Med-fast release, (2) Excel 3 Purple: Medium release, (2) Excel 4 Orange: Med-slow release,(2) Excel 5 Aqua: Slowest release.", price: 9.45, sale: false, clearance: false, category_id: 4 },
 
-            { image: "/images/accessories/genesis-sync-bowling-tape.jpg", brand: "Genisis", name: "Sync Silver Bowling Tape", description: "The Genesis Sync Silver tape is an all new hybrid of traditional style bowling tape.It is made of semi-transparent 10 mil soft vinyl that combines enhanced grip with a smooth surface, to resist wear of the tape. The soft feel gives a comfortable grip, helping to eliminate added tension in your grip. This is a great addition to any bowler's bag!", price: 9.44, sale: false, clearance: false, category_id: 4 },
+            { image: "/images/accessories/genesis-sync-bowling-tape.jpg", brand: "Genesis", name: "Sync Silver Bowling Tape", description: "The Genesis Sync Silver tape is an all new hybrid of traditional style bowling tape.It is made of semi-transparent 10 mil soft vinyl that combines enhanced grip with a smooth surface, to resist wear of the tape. The soft feel gives a comfortable grip, helping to eliminate added tension in your grip. This is a great addition to any bowler's bag!", price: 9.44, sale: false, clearance: false, category_id: 4 },
 
             { image: "/images/accessories/kr-strikeforce-pure_energy-ball-cleaner.jpg", brand: "KR Strikeforce", name: "Pure Energy Bowling Ball Cleaner", description: "Strikeforce Pure Energy bowling ball cleaner is perfect for removing dirt and oil from your bowling balls, plus restores that tacky surface for more backend hook.", price: 12.43, sale: true, clearance: false, category_id: 4 },
 
@@ -322,30 +322,6 @@ async function createInitialOrders() {
 
     } catch (error) {
         console.error("Error creating orders");
-        throw error;
-    }
-}
-
-// Create dummy data for items_purchased table
-async function createInitialItemsPurchased() {
-    try {
-        console.log("Starting to create ItemsPurchased");
-        const dummyItemsPurchased = [
-            { product_id: 1, order_id: 1, purchasedPrice: 167.95},
-            { product_id: 2, order_id: 1, purchasedPrice: 149.95},
-            { product_id: 3, order_id: 2, purchasedPrice: 79.95},
-            { product_id: 4, order_id: 2, purchasedPrice: 279.95}
-        ];
-
-
-        const itemsPurchased = await Promise.all(dummyItemsPurchased.map(createItemsPurchased));
-
-        console.log("ItemsPurchased created:");
-        console.log(itemsPurchased)
-        console.log("Finished creating ItemsPurchased!");
-
-    } catch (error) {
-        console.error("Error creating ItemsPurchased");
         throw error;
     }
 }
@@ -407,7 +383,6 @@ async function rebuildDB() {
     await createInitialCategory();
     await createInitialProducts();
     await createInitialOrders();
-    // await createInitialItemsPurchased();
     await createInitialPayment();
     await createInitialCartItems();
 

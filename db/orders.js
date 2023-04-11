@@ -3,19 +3,16 @@ const client = require('./client');
 // Create an order.
 async function createOrder( {user_id, order_date} ) {
     
-    console.log("Order date", order_date)
     try {
-        console.log("staring createProducts");
         const { rows: [order] } = await client.query(`
             INSERT INTO orders(user_id, order_date)
             VALUES ($1, $2)
             RETURNING *;
         `, [user_id, order_date]);
 
-        console.log("finished createOrder");
         return order;
     } catch (error) {
-        throw "Error w/ createOrder", error;
+        throw error;
     };
 };
 
@@ -43,7 +40,7 @@ async function deleteOrder(id) {
         
         return `Deleted order id: ${id}`;
     } catch (error) {
-        throw "Error w/ deleteOrder", error;
+        throw error;
     };
 };
 
@@ -64,9 +61,9 @@ async function editOrder( {id, order_status}) {
     };
 };
 
+// Get order by user id. 
 async function getOrderByUserId(user_id) {
     try {
-        console.log("db70- User_id:", user_id);
         const { rows } = await client.query(`
             SELECT id, user_id, order_date, order_status 
             FROM orders
@@ -81,7 +78,6 @@ async function getOrderByUserId(user_id) {
             });
         };
 
-        console.log("DB85- rows:", rows);
         return rows;
 
     } catch (error) {

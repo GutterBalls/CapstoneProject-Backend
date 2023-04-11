@@ -15,7 +15,6 @@ const {
     getUserById,
     getUserByUsername,
     updateUser,
-    deleteUser,
     createOrder
 } = require('../db');
 
@@ -31,20 +30,19 @@ usersRouter.get('/', requireAdmin, async (req, res) => {
 
 // Get user by ID
 usersRouter.get('/me', requireUser, async (req, res) => {
-    
-    // console.log("Req user", req.user);
-    
+        
     const user = await getUserById(req.user.id);
+    console.log("users /me", user)
 
     res.send(
         user
     );
-}) ;
+});
 
 // Login
 usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
-    // console.log("user api:" + req.body);
+    
     if (!username || !password) {
         next({
         name: "MissingCredentialsError",
@@ -54,8 +52,6 @@ usersRouter.post('/login', async (req, res, next) => {
 
     try {
         const user = await getUserByUsername(username); 
-        // console.log("User..");
-        // console.log(user); 
         const areTheyTheSame = await bcrypt.compare(password, user.password); 
         if (user && areTheyTheSame) {  
             const token = jwt.sign({ 
@@ -76,19 +72,18 @@ usersRouter.post('/login', async (req, res, next) => {
             });
         }
     } catch(error) {
-        console.log(error);
-        next(error);
-    }
+        throw error;
+    };
 });
 
 
-// Register
+// Register a new user
 usersRouter.post('/register', async (req, res, next) => {
     const { username, password, email, isAdmin, isActive } = req.body;
-    // console.log("req body", req.body)
+    
     try {
         const _user = await getUserByUsername(username);
-        // console.log("User from getUser function", _user)
+        
         if (_user) {
             res.send({
                 name: 'UserExistsError',
@@ -108,8 +103,9 @@ usersRouter.post('/register', async (req, res, next) => {
             isActive
         });
         
+        // Creating a new order (cart) for a new user upon signing up.
         const newOrder = await createOrder({user_id: user.id, order_date: new Date});
-        // console.log("New account order", newOrder)
+        
             if (user.id) {
                 const token = jwt.sign({ 
                     id: user.id, 
@@ -123,12 +119,12 @@ usersRouter.post('/register', async (req, res, next) => {
                 })};
         };
     } catch (error) {
-        throw(error);
+        throw error;
     };
 });
 
-// Edit username and password
-usersRouter.patch('/:id', requireUser || requireAdmin, async (req, res, next) => {
+// Edit user information.
+usersRouter.patch('/:id', requireUser || requireAdmin, async (req, res) => {
     try{
         const { id } = req.params;
         const { username, password, email } = req.body;
@@ -136,28 +132,12 @@ usersRouter.patch('/:id', requireUser || requireAdmin, async (req, res, next) =>
         let hashPassword = await bcrypt.hash(password, saltRounds);
         let hashEmail = await bcrypt.hash(email, saltRounds);
         
-// Update user in DB
         const updatedUser = await updateUser(id, {username, password: hashPassword, email: hashEmail});
 
-        // const areTheyTheSame = await bcrypt.compare(password, updatedUser.password); 
-        // if (updatedUser && areTheyTheSame) {  
-        //     const token = jwt.sign({ 
-        //         id: updatedUser.id, 
-        //         username 
-        //     }, process.env.JWT_SECRET, { 
-        //         expiresIn: "1w" 
-        //     });
-
-        //     res.send({
-        //         message: "You are now logged in!", 
-        //         token: token 
-        //     });
-        // }
-// Send updated user response
         res.send(updatedUser);
     } catch (error) {
-        throw(error);
-    }
+        throw error;
+    };
 });
 
 // // Set user Inactive by user ID
@@ -166,7 +146,7 @@ usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) =
         const user = await getUserById(req.params.id);
 
         if (user.id === req.user.id || req.user.isAdmin === true) {
-            console.log("req.user.isActive :", req.user.isActive);
+    
             if(user.isActive === true){
                 const disableUser = await updateUser(user.id, { isActive: false });
                 res.send(disableUser);
@@ -183,12 +163,12 @@ usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) =
                 name: "UserNotFoundError",
                 message: "That user does not exist"
             });
-        }
+        };
 
     } catch (error) {
-        throw(error);
-    }
-})
+        throw error;
+    };
+});
 
 
 module.exports = usersRouter;

@@ -2,67 +2,46 @@ const express = require('express');
 
 const cartItemsRouter = express.Router();
 
-const { requireUser, requireAdmin } = require('./utils');
+const { requireUser } = require('./utils');
 
 const { 
     createCartItem,
-    getAllCartItems,
     getCartItemById,
     deleteCartItem,
-    updateCartItem,
-    getCartWithOrdersAndProducts
-
+    getCartWithOrdersAndProducts,
+    updateCartItem
 } = require('../db');
 
 // Create Cart Item - 
-cartItemsRouter.post('/', async (req, res) => {
+cartItemsRouter.post('/', requireUser, async (req, res) => {
     try{
         const { user_id, order_id, product_id, qty } = req.body;
         const currentUsersCart = await getCartWithOrdersAndProducts(user_id);
-        console.log("Current users cart API line 22", currentUsersCart);
-        console.log("Req.body p_id", product_id);
-        const hasProduct = currentUsersCart.some(product => product.product_id === product_id)
+        const hasProduct = currentUsersCart.some(product => product.product_id === product_id);
         if (hasProduct) {
-            console.log("Contains object with product_id = 1", hasProduct)
             res.send("Product already exists in cart error.")
         } else {
-            console.log("Does not contain product_id = 1", hasProduct)
             const createdCartItem = await createCartItem({user_id, order_id, product_id, qty});
-            console.log("inside else cart API")
             res.send(
                 createdCartItem
             );
         };
        
     } catch (error) {
-        throw(error);
+        throw error;
     };
 });
 
 // Get all Cart Items
-cartItemsRouter.get('/:userId', async (req, res) => {
-    console.log("cart LINE35", req.params)
+cartItemsRouter.get('/:userId', requireUser, async (req, res) => {
+    
     const cartItems = await getCartWithOrdersAndProducts(req.params.userId);
-    console.log("api cart line 37")
-    console.log(cartItems)
     res.send(
         cartItems
     );
 });
 
-// // Get Cart Items by ID
-// cartItemsRouter.get('/:id', async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const cartItemsById = await getCartItemById(id);
-//         res.send(
-//             cartItemsById
-//         );
-        
-//     } catch (error) {
-//         throw error;
-//     };
-// });
+
 // Get Cart Join table
 cartItemsRouter.get('/:cartId/join', async (req, res, next) => {
     const {cartId} = req.params;
@@ -74,16 +53,14 @@ cartItemsRouter.get('/:cartId/join', async (req, res, next) => {
         
     } catch (error) {
         throw error;
-    }
-})
+    };
+});
+
 // Delete Cart Items by ID
-cartItemsRouter.delete('/:id', async (req, res) => {
+cartItemsRouter.delete('/:id', requireUser, async (req, res) => {
     try{
-        console.log("Line 72 api delete req params", req.params)
         const { id } = req.params;
-        console.log("Line 74 api delete id", id)
         const cartItem = await getCartItemById(id);
-        console.log("Line 76 api cartItem", cartItem)
         if(cartItem.id == id){
             const deletedCartItem = await deleteCartItem(id);
                 res.send(
@@ -117,7 +94,7 @@ cartItemsRouter.patch('/:id', async (req, res) => {
         );
 
     } catch (error) {
-        throw(error);
+        throw error;
     };
 });
 
