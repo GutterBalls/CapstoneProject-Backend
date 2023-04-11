@@ -69,9 +69,6 @@ apiRouter.use('/products', productsRouter);
 const ordersRouter = require('./orders');
 apiRouter.use('/orders', ordersRouter);
 
-const itemsPurchasedRouter = require('./itemsPurchased');
-apiRouter.use('/itemsPurchased', itemsPurchasedRouter);
-
 const paymentRouter = require('./payment');
 apiRouter.use('/payment', paymentRouter);
 

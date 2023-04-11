@@ -2,7 +2,7 @@ const express = require('express');
 
 const productsRouter = express.Router();
 
-const { requireAdmin, requireUser } = require('./utils');
+const { requireAdmin } = require('./utils');
 
 
 const { 
@@ -51,7 +51,6 @@ productsRouter.get('/:id', async (req, res, next) => {
 productsRouter.post('/', requireAdmin, async (req, res) => {
     try{
         const { image, brand, name, description, price, sale, clearance, category_id } = req.body;
-        const productData = {};
 
         const createdProduct = await createProduct({image, brand, name, description, price, sale, clearance, category_id});
         res.send(
@@ -59,11 +58,11 @@ productsRouter.post('/', requireAdmin, async (req, res) => {
         );
 
     } catch (error) {
-        throw(error);
+        throw error;
     };
 });
 
-// update product by ID - Admin only
+// Update product by ID - Admin only
 productsRouter.patch('/:id', requireAdmin, async (req, res) => {
     try{
         const { id } = req.params;
@@ -76,11 +75,11 @@ productsRouter.patch('/:id', requireAdmin, async (req, res) => {
         );
 
     } catch (error) {
-        throw(error);
+        throw error;
     };
 });
 
-// delete product by ID - Admin only
+// Delete product by ID - Admin only
 productsRouter.delete('/:id', requireAdmin, async (req, res) => {
     try{
         const { id } = req.params;

@@ -13,20 +13,21 @@ const {
 } = require('../db');
 
 // Get all orders
-ordersRouter.get('/', requireAdmin, async (req, res, next) => {
+ordersRouter.get('/', requireAdmin, async (req, res) => {
+
     const allOrders = await getAllOrders();
 
     res.send(
         allOrders
     );
     
-})
+});
 
 // // Get order by userId - User or Admin
-ordersRouter.get('/me', /* requireUser || requireAdmin, */ async (req, res) => {
-    console.log("Req user", req.user);
+ordersRouter.get('/me', requireUser, async (req, res) => {
+    
     const orderByUserId = await getOrderByUserId(req.user.id);
-    console.log("orderByUserID:", orderByUserId)
+    
     res.send(
         orderByUserId
     );
@@ -34,11 +35,9 @@ ordersRouter.get('/me', /* requireUser || requireAdmin, */ async (req, res) => {
 });
 
 // Create new order - User
-ordersRouter.post('/', requireUser || requireAdmin, async (req, res, next) => {
+ordersRouter.post('/', requireUser, async (req, res, next) => {
     try{
         const { user_id, order_date, order_status } = req.body;
-        console.log("Req user", req.user.id)
-        console.log("Req body", req.body);
 
         const createdOrder = await createOrder( {user_id, order_date, order_status} );
         
@@ -47,11 +46,11 @@ ordersRouter.post('/', requireUser || requireAdmin, async (req, res, next) => {
         );
 
     } catch (error) {
-        throw("Error creating an order", error);
+        throw error;
     };
-})
+});
 
-// update order by ID - Admin only
+// Update order by ID - Admin only
 ordersRouter.patch('/:id', requireAdmin, async (req, res, next) => {
     try{
         const { id } = req.params;
@@ -66,7 +65,7 @@ ordersRouter.patch('/:id', requireAdmin, async (req, res, next) => {
     } catch (error) {
         throw("Error updating order status",error);
     };
-})
+});
 
 // delete order by ID - Admin only
 ordersRouter.delete('/:id', requireAdmin, async (req, res, next) => {

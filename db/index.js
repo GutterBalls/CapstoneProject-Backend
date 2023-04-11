@@ -1,9 +1,7 @@
 module.exports = {
-    // ...require('./client'), // 
-    ...require('./users'), // adds key/values from users.js
+    ...require('./users'), 
     ...require('./products'),
     ...require('./orders'),
-    ...require('./itemsPurchased'),
     ...require('./payment'),
     ...require('./cartItems')
 };

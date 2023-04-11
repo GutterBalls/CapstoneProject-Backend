@@ -2,7 +2,7 @@ const express = require('express');
 
 const reviewsRouter = express.Router();
 
-const { requireAdmin, requireUser } = require('./utils');
+const { requireUser } = require('./utils');
 
 const {
     getAllReviews,
@@ -13,8 +13,8 @@ const {
 reviewsRouter.post('/', requireUser, async (req, res) => {
     try {
         const { username, product_id, product_brand, product_name, rating, review}  = req.body;
-        console.log("api products username", username)
-        const productReview = await createReview({username, product_id, product_brand, product_name, rating, review})
+        
+        const productReview = await createReview({username, product_id, product_brand, product_name, rating, review});
         res.send(
             productReview
         );
@@ -35,7 +35,7 @@ reviewsRouter.get('/', async (req, res) => {
 
     } catch (error) {
         throw error;
-    }
-})
+    };
+});
 
 module.exports = reviewsRouter;
