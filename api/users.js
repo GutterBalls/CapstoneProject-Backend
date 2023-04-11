@@ -52,24 +52,33 @@ usersRouter.post('/login', async (req, res, next) => {
 
     try {
         const user = await getUserByUsername(username); 
-        const areTheyTheSame = await bcrypt.compare(password, user.password); 
-        if (user && areTheyTheSame) {  
-            const token = jwt.sign({ 
-                id: user.id, 
-                username
-            }, process.env.JWT_SECRET, { 
-                expiresIn: "1w" 
-            });
-
-            res.send({
-                message: "You are now logged in!", 
-                token: token 
-            });
+        
+        if (user && user.isActive === true) {  
+            const areTheyTheSame = await bcrypt.compare(password, user.password); 
+            
+            if (areTheyTheSame) {
+                const token = jwt.sign({ 
+                    id: user.id, 
+                    username
+                }, process.env.JWT_SECRET, { 
+                    expiresIn: "1w" 
+                });
+    
+                res.send({
+                    message: "You are now logged in!", 
+                    token: token 
+                });
+            } else {
+                res.send({
+                    name: "Incorrect Credentials!",
+                    message: "Username or password is incorrect!"
+                }).status(403);
+            }
         } else {
             res.send({
                 name: "Incorrect Credentials!",
                 message: "Username or password is incorrect!"
-            });
+            }).status(403);
         }
     } catch(error) {
         throw error;
