@@ -179,5 +179,35 @@ usersRouter.delete('/:id', requireUser || requireAdmin, async (req, res, next) =
     };
 });
 
+// // Admin - Set users as admin by user ID
+usersRouter.patch('/admin/:id', requireAdmin, async (req, res, next) => {
+    try {
+        const user = await getUserById(req.params.id);
+
+        if (req.user.isAdmin === true) {
+    
+            if(user.isAdmin === true){
+                const disableAdminUser = await updateUser(user.id, { isAdmin: false });
+                res.send(disableAdminUser);
+            } else{
+                const enableAdminUser = await updateUser(user.id, { isAdmin: true });
+                res.send(enableAdminUser);
+            }
+
+        } else {
+                res.send(user ? { 
+                name: "UnauthorizedUserError",
+                message: "You cannot make this user admin"
+            } : {
+                name: "UserNotFoundError",
+                message: "That user does not exist"
+            });
+        };
+
+    } catch (error) {
+        throw error;
+    };
+});
+
 
 module.exports = usersRouter;
