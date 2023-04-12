@@ -66,7 +66,8 @@ usersRouter.post('/login', async (req, res, next) => {
     
                 res.send({
                     message: "You are now logged in!", 
-                    token: token 
+                    token: token,
+                    id: user.id
                 });
             } else {
                 res.send({
