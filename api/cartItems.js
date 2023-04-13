@@ -9,6 +9,7 @@ const {
     getCartItemById,
     deleteCartItem,
     getCartWithOrdersAndProducts,
+    getCompletedCartWithOrdersAndProducts,
     updateCartItem
 } = require('../db');
 
@@ -32,7 +33,7 @@ cartItemsRouter.post('/', requireUser, async (req, res) => {
     };
 });
 
-// Get all Cart Items
+// Get all Pending Cart Items
 cartItemsRouter.get('/:userId', requireUser, async (req, res) => {
     
     const cartItems = await getCartWithOrdersAndProducts(req.params.userId);
@@ -40,6 +41,16 @@ cartItemsRouter.get('/:userId', requireUser, async (req, res) => {
         cartItems
     );
 });
+
+// Get all Completed Cart Items
+cartItemsRouter.get('/completed/:userId', requireUser, async (req, res) => {
+    
+    const cartItems = await getCompletedCartWithOrdersAndProducts(req.params.userId);
+    res.send(
+        cartItems
+    );
+});
+
 
 
 // Get Cart Join table

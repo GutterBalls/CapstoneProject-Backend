@@ -82,7 +82,7 @@ async function updateCartItem(id, fields = { }) {
     }
 };
 
-// Join table with Products / Orders / Cart Items
+// Join table with Products / Orders / Cart Items of PENDING CART
 async function getCartWithOrdersAndProducts(userId) {
     try {
         const { rows } = await client.query(`
@@ -101,10 +101,29 @@ async function getCartWithOrdersAndProducts(userId) {
     };
 };
 
+async function getCompletedCartWithOrdersAndProducts(userId) {
+    try {
+        const { rows } = await client.query(`
+        SELECT cart_items.id, cart_items.order_id, cart_items.product_id, cart_items.qty, products.price, products.brand, products.name, products.image FROM cart_items
+        JOIN products
+        ON cart_items.product_id = products.id
+        JOIN orders
+        ON cart_items.order_id = orders.id
+        WHERE cart_items.user_id=$1 AND orders.order_status=true;
+        `, [userId]);
+        
+        return rows;
+
+    } catch (error) {
+        throw error;
+    };
+};
+
 module.exports = {
     createCartItem,
     getCartItemById,
     deleteCartItem,
     updateCartItem,
-    getCartWithOrdersAndProducts
+    getCartWithOrdersAndProducts,
+    getCompletedCartWithOrdersAndProducts
 }
